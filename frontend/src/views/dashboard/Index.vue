@@ -3,5 +3,7 @@ import Sidebar from '../../components/Sidebar/Sidebar.vue'
 </script>
 
 <template>
-  <Sidebar />
+    <div>
+        <p>oii</p>
+    </div>
 </template>
