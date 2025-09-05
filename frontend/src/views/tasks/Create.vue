@@ -4,10 +4,26 @@ import { ref } from 'vue'
 const form = ref()
 const name = ref('')
 const description = ref('')
+const tasks = ref([
+  {
+    title: 'Tarefa 1',
+  },
+  {
+    title: 'Tarefa 2',
+  },
+])
 
 const submit = () => {
   if (form.value?.validate()) {
   }
+}
+
+function addChecklistItem() {
+  alert('oi')
+}
+
+function removeItem(index: number) {
+  alert('remover')
 }
 </script>
 
@@ -39,7 +55,7 @@ const submit = () => {
                 variant="outlined"
               />
             </v-col>
-            <v-col cols="4">
+            <v-col cols="6">
               <!-- Prioridade select -->
               <v-select
                 placeholder="Selecione a prioridade da tarefa"
@@ -69,8 +85,31 @@ const submit = () => {
             </v-col>
 
             <v-col cols="12">
-              <!-- TODO CHECKLIST -->
-              <v-label> Itens </v-label>
+              <v-list-item
+                v-for="(task, index) in tasks"
+                :key="index"
+                class="mb-3 bg-grey-lighten-4"
+                rounded
+              >
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center justify-space-between">
+                    <span>{{ index + 1 }} {{ task.title }} </span>
+                    <v-icon @click="() => removeItem(index)" class="text-red-lighten-1"
+                      >mdi-delete</v-icon
+                    >
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-text-field
+                label="Checklist"
+                placeholder="Adicionar item"
+                density="compact"
+                variant="outlined"
+              >
+                <template #append-inner>
+                  <v-icon @click="addChecklistItem">mdi-plus</v-icon>
+                </template>
+              </v-text-field>
             </v-col>
           </v-row>
 
