@@ -8,7 +8,7 @@ export default [
     {
         title: 'Gerenciar tarefas',
         icon: 'mdi-format-list-bulleted',
-        route: '/settings',
+        route: '/manage-tasks',
     },
     {
         title: 'Criar tarefa',
