@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 const form = ref()
 const name = ref('')
+const newChecklistItem = ref('')
 const description = ref('')
 const tasks = ref([
   {
@@ -19,7 +20,10 @@ const submit = () => {
 }
 
 function addChecklistItem() {
-  alert('oi')
+  const title = newChecklistItem.value.trim()
+  if (!title) return
+  tasks.value.push({ title })
+  newChecklistItem.value = ''
 }
 
 function removeItem(index: number) {
@@ -101,6 +105,7 @@ function removeItem(index: number) {
                 </v-list-item-content>
               </v-list-item>
               <v-text-field
+                v-model="newChecklistItem"
                 label="Checklist"
                 placeholder="Adicionar item"
                 density="compact"
