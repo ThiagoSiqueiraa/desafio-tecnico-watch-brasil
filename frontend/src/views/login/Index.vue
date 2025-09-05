@@ -40,9 +40,10 @@ function login() {
               ></v-text-field>
 
               <v-btn type="submit" class="w-100" color="primary" value="log in">Login</v-btn>
-              <small class="text-center d-block w-100 mt-4"
-                >Não possui conta? <a href="#">Cadastre-se</a></small
-              >
+              <small class="text-center d-block w-100 mt-4">
+                Não possui conta?
+                <RouterLink to="/register">Cadastre-se</RouterLink>
+              </small>
             </form>
           </v-card-text>
         </v-card>
