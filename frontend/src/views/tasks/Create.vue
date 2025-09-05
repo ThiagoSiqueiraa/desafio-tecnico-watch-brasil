@@ -27,7 +27,7 @@ function addChecklistItem() {
 }
 
 function removeItem(index: number) {
-  alert('remover')
+  tasks.value.splice(index, 1)
 }
 </script>
 
