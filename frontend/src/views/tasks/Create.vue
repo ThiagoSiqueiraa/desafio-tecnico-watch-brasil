@@ -3,13 +3,10 @@ import { ref } from 'vue'
 
 const form = ref()
 const name = ref('')
-const email = ref('')
 const description = ref('')
 
 const submit = () => {
   if (form.value?.validate()) {
-    // Aqui você pode enviar os dados do formulário
-    alert(`Nome: ${name.value}\nEmail: ${email.value}\nDescrição: ${description.value}`)
   }
 }
 </script>
@@ -54,18 +51,19 @@ const submit = () => {
               >
               </v-select>
             </v-col>
-            <v-col cols="8">
+            <v-col cols="6">
               <div class="d-flex align-center ga-4">
-                <v-select
-                  label="Priority"
-                  :items="['Alta', 'Média', 'Baixa']"
-                  density="compact"
+                <v-date-input
+                  label="Vencimento"
                   variant="outlined"
+                  density="compact"
                   hide-details="auto"
+                  clearable
+                  append-inner-icon="mdi-calendar"
+                  prepend-icon=""
                 />
-
                 <v-btn variant="outlined" height="40" prepend-icon="mdi-account-multiple-plus">
-                  Add Members
+                  Adicionar membros
                 </v-btn>
               </div>
             </v-col>
