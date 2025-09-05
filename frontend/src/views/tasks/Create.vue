@@ -5,14 +5,7 @@ const form = ref()
 const name = ref('')
 const newChecklistItem = ref('')
 const description = ref('')
-const tasks = ref([
-  {
-    title: 'Tarefa 1',
-  },
-  {
-    title: 'Tarefa 2',
-  },
-])
+const tasks = ref<{ title: string }[]>([])
 
 const submit = () => {
   if (form.value?.validate()) {
