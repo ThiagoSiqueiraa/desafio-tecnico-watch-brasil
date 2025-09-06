@@ -56,14 +56,13 @@ function getPossibleProjects() {
       </template>
     </v-list-item>
 
-    <v-list nav density="comfortable">
+    <v-list nav density="compact">
       <v-list-item
         v-for="(item, index) in menu"
         :key="index"
         :prepend-icon="item.icon"
         :title="item.title"
         :to="item.route"
-        rounded="lg"
       />
     </v-list>
   </v-navigation-drawer>
