@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import TaskCard from '@/components/tasks/TaskCard.vue'
+import CreateTaskModal from '@/components/tasks/CreateTaskModal.vue'
+import { ref } from 'vue'
+
+const showDialogCreteTask = ref(false)
+
+function openCreateTaskModal() {
+  showDialogCreteTask.value = true
+}
+
 </script>
 
 <template>
+  <CreateTaskModal v-model="showDialogCreteTask" v-if="showDialogCreteTask" />
   <div class="wrapper-tasks">
     <div class="column">
       <div class="column-header">
@@ -20,7 +30,7 @@ import TaskCard from '@/components/tasks/TaskCard.vue'
       </div>
 
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text">Adicionar uma tarefa</v-btn>
+        <v-btn block prepend-icon="mdi-plus" variant="text" @click="openCreateTaskModal()">Adicionar uma tarefa</v-btn>
       </div>
     </div>
 
@@ -28,7 +38,7 @@ import TaskCard from '@/components/tasks/TaskCard.vue'
       <div class="column-header"><h3>Em andamento</h3></div>
       <div class="column-cards"><TaskCard /><TaskCard /><TaskCard /></div>
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text">Adicionar uma tarefa</v-btn>
+        <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true">Adicionar uma tarefa</v-btn>
       </div>
     </div>
 
@@ -42,7 +52,7 @@ import TaskCard from '@/components/tasks/TaskCard.vue'
         <TaskCard />
       </div>
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text">Adicionar uma tarefa</v-btn>
+        <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true">Adicionar uma tarefa</v-btn>
       </div>
     </div>
   </div>
