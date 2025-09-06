@@ -21,5 +21,19 @@ app.post(
   }
 );
 
+app.get("/project/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const project = await connection.query(
+    "SELECT id, name FROM app.projects WHERE id = $1",
+    [id]
+  );
+
+  if (project.length === 0) {
+    return res.status(404).json({ message: "Projeto não encontrado" });
+  }
+
+  res.json(project[0]);
+});
+
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
