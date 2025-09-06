@@ -9,7 +9,7 @@ const props = defineProps(['priority'])
 </script>
 
 <template>
-  <v-card class="mx-auto my-8" width="100%">
+  <v-card class="mx-auto my-4" width="100%">
     <v-card-item>
       <div class="chips-wrapper">
         <TagTask :priority="props.priority" />
