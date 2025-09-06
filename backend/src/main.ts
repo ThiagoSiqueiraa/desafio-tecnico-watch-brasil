@@ -21,7 +21,7 @@ app.post(
   }
 );
 
-app.get("/project/:id", async (req: Request, res: Response) => {
+app.get("/projects/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const project = await connection.query(
     "SELECT id, name FROM app.projects WHERE id = $1",
