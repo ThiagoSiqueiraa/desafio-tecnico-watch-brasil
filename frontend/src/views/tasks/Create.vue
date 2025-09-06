@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
 const form = ref()
 const name = ref('')
 const newChecklistItem = ref('')
 const description = ref('')
 const tasks = ref<{ title: string }[]>([])
+const showDialogAddMember = ref(false)
 
 const submit = () => {
   if (form.value?.validate()) {
@@ -25,6 +26,12 @@ function removeItem(index: number) {
 </script>
 
 <template>
+  <AddMemberModal
+    v-model="showDialogAddMember"
+    title="Excluir tarefa"
+    text="Deseja realmente excluir?"
+  />
+
   <v-container>
     <v-card>
       <v-card-title> Criar Tarefa </v-card-title>
@@ -78,28 +85,35 @@ function removeItem(index: number) {
                   locale="pt-BR"
                   :min="new Date()"
                 />
-                <v-btn variant="outlined" height="40" prepend-icon="mdi-account-multiple-plus">
+                <v-btn
+                  @click="showDialogAddMember = true"
+                  variant="outlined"
+                  height="40"
+                  prepend-icon="mdi-account-multiple-plus"
+                >
                   Adicionar membros
                 </v-btn>
               </div>
             </v-col>
 
             <v-col cols="12">
-              <v-list-item
-                v-for="(task, index) in tasks"
-                :key="index"
-                class="mb-3 bg-grey-lighten-4"
-                rounded
-              >
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center justify-space-between">
-                    <span>{{ index + 1 }} {{ task.title }} </span>
-                    <v-icon @click="() => removeItem(index)" class="text-red-lighten-1"
-                      >mdi-delete</v-icon
-                    >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <v-list>
+                <v-list-item
+                  v-for="(task, index) in tasks"
+                  :key="index"
+                  class="mb-3 bg-grey-lighten-4"
+                  rounded
+                >
+                  <v-list-item-content>
+                    <v-list-item-title class="d-flex align-center justify-space-between">
+                      <span>{{ index + 1 }} {{ task.title }} </span>
+                      <v-icon @click="() => removeItem(index)" class="text-red-lighten-1"
+                        >mdi-delete</v-icon
+                      >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
               <v-text-field
                 v-model="newChecklistItem"
                 label="Checklist"
