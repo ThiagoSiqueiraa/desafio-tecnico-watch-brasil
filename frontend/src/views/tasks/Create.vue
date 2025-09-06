@@ -168,7 +168,9 @@ function handleCancel() {
             </v-col>
           </v-row>
 
-          <v-btn color="primary" class="mt-4" @click="submit"> Criar </v-btn>
+            <div class="d-flex justify-end">
+            <v-btn color="primary" class="mt-4" @click="submit"> Criar </v-btn>
+            </div>
         </v-form>
       </v-card-text>
     </v-card>
