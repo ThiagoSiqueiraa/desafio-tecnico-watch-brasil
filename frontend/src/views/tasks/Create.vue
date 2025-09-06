@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
+
+type Member = {
+  name: string
+  email: string
+  id: number
+}
+
 const form = ref()
 const name = ref('')
 const newChecklistItem = ref('')
 const description = ref('')
 const tasks = ref<{ title: string }[]>([])
 const showDialogAddMember = ref(false)
+const members = ref<Member[]>([])
 
 const submit = () => {
   if (form.value?.validate()) {
@@ -23,6 +31,19 @@ function addChecklistItem() {
 function removeItem(index: number) {
   tasks.value.splice(index, 1)
 }
+
+function handleConfirm(membersReceived: any) {
+  console.log(members)
+
+  members.value = membersReceived
+
+  showDialogAddMember.value = false
+}
+
+function handleCancel() {
+  console.log('Exclusão cancelada')
+  showDialogAddMember.value = false
+}
 </script>
 
 <template>
@@ -30,6 +51,8 @@ function removeItem(index: number) {
     v-model="showDialogAddMember"
     title="Excluir tarefa"
     text="Deseja realmente excluir?"
+    @confirm="handleConfirm"
+    @cancel="handleCancel"
   />
 
   <v-container>
@@ -94,6 +117,23 @@ function removeItem(index: number) {
                   Adicionar membros
                 </v-btn>
               </div>
+            </v-col>
+
+            <v-col cols="12">
+              <!-- cria label escrito membros: -->
+              <div class="mb-2 font-weight-bold">Membros:</div>
+              <v-list v-if="members.length > 0" class="d-flex flex-row">
+                <v-list-item
+                  v-for="(member, index) in members"
+                  :key="index"
+                  class="mb-3 bg-grey-lighten-4"
+                  :title="member.name"
+                  rounded
+                  inline
+                >
+                </v-list-item>
+              </v-list>
+              <div v-else class="text-grey">Nenhum membro adicionado.</div>
             </v-col>
 
             <v-col cols="12">
