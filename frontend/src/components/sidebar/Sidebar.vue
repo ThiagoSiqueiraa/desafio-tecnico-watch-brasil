@@ -1,6 +1,20 @@
 <script lang="ts" setup>
 import menuItens from './menuItens'
 const menu = menuItens
+
+function changeProject() {
+  alert('Trocar de projeto')
+}
+
+function addProject() {
+  alert('Adicionar novo projeto')
+}
+
+let actualProject = 'Projeto X'
+
+function getPossibleProjects() {
+  return ['Projeto X', 'Projeto Y', 'Projeto Z'].filter((p) => p !== actualProject)
+}
 </script>
 
 <template>
@@ -14,6 +28,33 @@ const menu = menuItens
     </v-list>
 
     <v-divider />
+
+    <v-list-item prepend-icon="mdi-folder" title="Voce está em" subtitle="Projeto X" rounded="lg">
+      <template #append>
+        <v-menu>
+          <template #activator="{ props }">
+            <v-btn icon variant="text" size="small" v-bind="props">
+              <v-icon>mdi-chevron-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(project, idx) in getPossibleProjects()"
+              :key="idx"
+              @click="changeProject()"
+            >
+              <v-list-item-title>{{ project }}</v-list-item-title>
+            </v-list-item>
+            <v-divider />
+            <v-list-item>
+              <v-btn variant="outlined" height="40" @click="addProject()">
+                Criar novo projeto
+              </v-btn>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+    </v-list-item>
 
     <v-list nav density="comfortable">
       <v-list-item
