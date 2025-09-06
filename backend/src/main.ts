@@ -44,5 +44,11 @@ app.get("/projects", async (req: Request, res: Response) => {
   res.json(projects);
 });
 
+app.delete("/projects/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await connection.query("DELETE FROM app.projects WHERE id = $1", [id]);
+  res.status(204).send();
+});
+
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
