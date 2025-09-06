@@ -6,11 +6,11 @@ import TaskCard from '@/components/tasks/TaskCard.vue'
   <div class="wrapper-tasks">
     <div class="column">
       <h3>Pendente</h3>
-      <TaskCard />
-      <TaskCard />
-      <TaskCard />
-      <TaskCard />
-      <TaskCard />
+      <TaskCard priority="low_priority"/>
+      <TaskCard priority="high_priority"/>
+      <TaskCard priority="medium_priority"/>
+      <TaskCard priority="high_priority"/>
+      <TaskCard priority="medium_priority"/>
     </div>
 
     <div class="column">
