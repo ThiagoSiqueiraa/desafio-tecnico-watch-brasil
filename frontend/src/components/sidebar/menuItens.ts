@@ -10,11 +10,6 @@ export default [
     route: '/manage-tasks',
   },
   {
-    title: 'Criar tarefa',
-    icon: 'mdi-plus-box',
-    route: '/create-task',
-  },
-  {
     title: 'Time',
     icon: 'mdi-account-group',
     route: '/team',

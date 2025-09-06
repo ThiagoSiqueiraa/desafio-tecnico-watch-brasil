@@ -74,7 +74,7 @@ function handleCancel() {
                   variant="outlined"
                 />
               </v-col>
-              <v-col cols="6">
+              <v-col cols="4">
                 <v-select
                   placeholder="Selecione a prioridade da tarefa"
                   :items="['Baixa', 'Média', 'Alta']"
@@ -84,7 +84,7 @@ function handleCancel() {
                   variant="outlined"
                 />
               </v-col>
-              <v-col cols="6">
+              <v-col cols="8">
                 <div class="d-flex align-center ga-4">
                   <v-date-input
                     label="Vencimento"
@@ -103,8 +103,9 @@ function handleCancel() {
                     variant="outlined"
                     height="40"
                     prepend-icon="mdi-account-multiple-plus"
+                    v-tooltip:bottom="'Adicionar membros à tarefa'"
                   >
-                    Adicionar membros
+
                   </v-btn>
                 </div>
               </v-col>
