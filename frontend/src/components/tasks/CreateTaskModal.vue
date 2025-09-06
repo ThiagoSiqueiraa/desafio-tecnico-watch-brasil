@@ -50,7 +50,7 @@ function handleCancel() {
   <v-dialog v-model="showDialog" max-width="700">
     <template #default>
       <v-card>
-        <v-card-title> Criar Tarefa </v-card-title>
+        <v-card-title>Criar tarefa</v-card-title>
         <v-card-text>
           <v-form ref="form" v-slot="{ validate }">
             <v-row>
