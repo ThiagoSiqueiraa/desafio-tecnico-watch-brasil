@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import pgPromise from "pg-promise";
+import cors from "cors";
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const connection = pgPromise()("postgres://postgres:123456@db:5432/app");
 
