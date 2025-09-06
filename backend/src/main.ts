@@ -35,5 +35,14 @@ app.get("/project/:id", async (req: Request, res: Response) => {
   res.json(project[0]);
 });
 
+app.get("/projects", async (req: Request, res: Response) => {
+  const { userId } = req.query;
+  const projects = await connection.query(
+    "SELECT id, name FROM app.projects WHERE owner_user_id = $1",
+    [userId]
+  );
+  res.json(projects);
+});
+
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
