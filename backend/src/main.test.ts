@@ -18,7 +18,7 @@ test("Deve criar um projeto com sucesso", async () => {
 
   console.log(outputCreateProject);
   const responseGetAccount = await axios.get(
-    `http://localhost:3000/project/${outputCreateProject.id}`
+    `http://localhost:3000/projects/${outputCreateProject.id}`
   );
   const outputGetProject = responseGetAccount.data;
   expect(outputGetProject.name).toBe(input.name);
@@ -62,7 +62,7 @@ test("Deve deletar um projeto com sucesso", async () => {
     
     //Verifica se o projeto foi realmente deletado
     try {
-        await axios.get(`http://localhost:3000/project/${projectId}`);
+        await axios.get(`http://localhost:3000/projects/${projectId}`);
     } catch (error: any) {
         expect(error.response.status).toBe(404);
         expect(error.response.data.message).toBe("Projeto não encontrado");
