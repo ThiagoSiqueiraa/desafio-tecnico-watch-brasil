@@ -7,7 +7,7 @@ const menu = menuItens
   <v-navigation-drawer app permanent width="280">
     <v-list>
       <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+        prepend-avatar="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
         subtitle="<e-mail do usuário>"
         title="<nome do usuário>"
       />
