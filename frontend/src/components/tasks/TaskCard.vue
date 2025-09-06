@@ -6,23 +6,20 @@ const dueDate = ref('2024-06-10')
 </script>
 
 <template>
-  <v-card class="mx-auto my-8" max-width="450px">
+  <v-card class="mx-auto my-8" width="100%">
     <v-card-item>
       <div class="chips-wrapper">
         <v-chip class="mb-2" color="cyan" label> Finalizado </v-chip>
-        <v-chip class="mb-2" color="purple" label> Pendente </v-chip>
+        <!-- <v-chip class="mb-2" color="purple" label> Pendente </v-chip>
         <v-chip class="mb-2" color="gray" label> Baixa prioridade </v-chip>
         <v-chip class="mb-2" color="orange" label> Média prioridade </v-chip>
-        <v-chip class="mb-2" color="red" label> Alta prioridade </v-chip>
+        <v-chip class="mb-2" color="red" label> Alta prioridade </v-chip> -->
       </div>
       <v-card-title> Card title </v-card-title>
     </v-card-item>
 
     <v-card-text>
-      <div class="mt-4">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua.
-      </div>
+
 
       <div class="progess-task mt-3">
         Tarefas completadas: 999 / 230020
