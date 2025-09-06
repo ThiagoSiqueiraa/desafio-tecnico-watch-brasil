@@ -74,6 +74,9 @@ function removeItem(index: number) {
                   clearable
                   append-inner-icon="mdi-calendar"
                   prepend-icon=""
+                  input-format="DD/MM/YYYY"
+                  locale="pt-BR"
+                  :min="new Date()"
                 />
                 <v-btn variant="outlined" height="40" prepend-icon="mdi-account-multiple-plus">
                   Adicionar membros
