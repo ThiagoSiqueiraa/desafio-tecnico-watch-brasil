@@ -1,5 +1,10 @@
 <script lang="ts" setup>
 import menuItens from './menuItens'
+import AddNewProjectModal from '../projects/AddNewProjectModal.vue'
+import { ref } from 'vue'
+
+const showAddNewProject = ref(false)
+
 const menu = menuItens
 
 function changeProject() {
@@ -7,7 +12,11 @@ function changeProject() {
 }
 
 function addProject() {
-  alert('Adicionar novo projeto')
+  showAddNewProject.value = true
+}
+
+function handleClose() {
+  showAddNewProject.value = false
 }
 
 let actualProject = 'Projeto X'
@@ -18,6 +27,7 @@ function getPossibleProjects() {
 </script>
 
 <template>
+  <AddNewProjectModal :modelValue="showAddNewProject" @close="handleClose()" />
   <v-navigation-drawer app permanent width="280">
     <v-list>
       <v-list-item
