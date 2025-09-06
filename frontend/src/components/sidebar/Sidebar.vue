@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import menuItens from './menuItens'
 import AddNewProjectModal from '../projects/AddNewProjectModal.vue'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
+import ProjectGateway  from '@/gateway/ProjectGateway'
+  const projectGateway = inject("projectGateway") as ProjectGateway;
 
 const showAddNewProject = ref(false)
 
@@ -12,10 +14,18 @@ function changeProject() {
 }
 
 function addProject() {
+
   showAddNewProject.value = true
 }
 
 function handleClose() {
+  showAddNewProject.value = false
+}
+
+async function handleSubmit(event: { title: string}) {
+  // Lógica para salvar o novo projeto
+  console.log('Salvar novo projeto:', event)
+  await projectGateway.create('32131')
   showAddNewProject.value = false
 }
 
@@ -27,7 +37,7 @@ function getPossibleProjects() {
 </script>
 
 <template>
-  <AddNewProjectModal :modelValue="showAddNewProject" @close="handleClose()" />
+  <AddNewProjectModal :modelValue="showAddNewProject" @close="handleClose()"  @save="handleSubmit($event)"/>
   <v-navigation-drawer app permanent width="280">
     <v-list>
       <v-list-item
