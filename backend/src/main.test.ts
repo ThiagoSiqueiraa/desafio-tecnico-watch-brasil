@@ -23,3 +23,19 @@ test("Deve criar um projeto com sucesso", async () => {
   const outputGetProject = responseGetAccount.data;
   expect(outputGetProject.name).toBe(input.name);
 });
+
+
+test("Deve retornar todos os projetos do usuário", async () => {
+    //Given
+    const userId = 1;
+    //When
+    const response = await axios.get(`http://localhost:3000/projects?userId=${userId}`);
+    const projects = response.data;
+    //Then
+    expect(response.status).toBe(200);
+    expect(Array.isArray(projects)).toBe(true);
+    projects.forEach((project: any) => {
+        expect(project).toHaveProperty('id');
+        expect(project).toHaveProperty('name');
+    });
+});
