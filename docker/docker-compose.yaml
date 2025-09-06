@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    image: api-backend
+    init: true
+    volumes:
+      - type: bind
+        source: ../backend/
+        target: /app
+      - type: volume
+        target: /app/node_modules
+    ports:
+      - 3000:3000
+  db:
+    image: postgres:14.3
+    ports:
+      - 5432:5432
+    volumes:
+      - ../database/create.sql:/docker-entrypoint-initdb.d/init.sql
+      - type: volume
+        target: /var/lib/postgresql/data
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
