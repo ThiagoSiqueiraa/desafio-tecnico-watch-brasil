@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import menuItens from './menuItens'
 import AddNewProjectModal from '../projects/AddNewProjectModal.vue'
-import { inject, ref } from 'vue'
-import ProjectGateway  from '@/gateway/ProjectGateway'
+import { inject, onMounted, ref } from 'vue'
+import ProjectGateway, { type Project }  from '@/gateway/ProjectGateway'
   const projectGateway = inject("projectGateway") as ProjectGateway;
 
 const showAddNewProject = ref(false)
 
 const menu = menuItens
-
+const projects = ref<Project[]>([])
 function changeProject() {
   alert('Trocar de projeto')
 }
@@ -31,9 +31,15 @@ async function handleSubmit(event: { title: string}) {
 
 let actualProject = 'Projeto X'
 
-function getPossibleProjects() {
-  return ['Projeto X', 'Projeto Y', 'Projeto Z'].filter((p) => p !== actualProject)
+async function getPossibleProjects() {
+  return projects.value
 }
+
+onMounted(async () => {
+    const response = await projectGateway.list()
+    console.log(projects)
+    projects.value = response
+})
 </script>
 
 <template>
@@ -59,11 +65,11 @@ function getPossibleProjects() {
           </template>
           <v-list>
             <v-list-item
-              v-for="(project, idx) in getPossibleProjects()"
+              v-for="(project, idx) in projects"
               :key="idx"
               @click="changeProject()"
             >
-              <v-list-item-title>{{ project }}</v-list-item-title>
+              <v-list-item-title>{{ project.name }}</v-list-item-title>
             </v-list-item>
             <v-divider />
             <v-list-item>
