@@ -10,7 +10,7 @@ export default [
     route: '/manage-tasks',
   },
   {
-    title: 'Time',
+    title: 'Membros do projeto',
     icon: 'mdi-account-group',
     route: '/team',
   },
