@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/auth'
 const projectGateway = inject('projectGateway') as ProjectGateway
 
 const showAddNewProject = ref(false)
-
+const user = useAuthStore().user
 const menu = menuItens
 const projects = ref<Project[]>([])
 function changeProject() {
@@ -53,14 +53,14 @@ onMounted(async () => {
     <v-list>
       <v-list-item
         prepend-avatar="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
-        subtitle="<e-mail do usuário>"
-        title="<nome do usuário>"
+        :subtitle="user?.email"
+        :title="user?.name"
       />
     </v-list>
 
     <v-divider />
 
-    <v-list-item prepend-icon="mdi-folder" title="Voce está em" subtitle="Projeto X" rounded="lg">
+    <v-list-item prepend-icon="mdi-folder" title="Voce está em" :subtitle="user?.currentProject?.name" rounded="lg">
       <template #append>
         <v-menu>
           <template #activator="{ props }">
