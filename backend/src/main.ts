@@ -14,6 +14,10 @@ app.post(
   "/projects",
   async (req: Request<{}, {}, CreateProjectBody>, res: Response) => {
     const { name } = req.body;
+    if(!name){
+        return res.status(400).json({ message: "Nome do projeto é obrigatório" });
+    }
+    
     const id = await connection.query(
       "INSERT INTO app.projects (name, owner_user_id) VALUES ($1, $2) RETURNING id",
       [name, 1]
