@@ -16,10 +16,10 @@ interface CreateProjectBody {
 }
 
 function authenticateToken(req: Request, res: Response, next: Function) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
-  
+
   verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
     if (err) return res.sendStatus(403);
     (req as any).user = user;
@@ -29,15 +29,19 @@ function authenticateToken(req: Request, res: Response, next: Function) {
 
 app.post(
   "/projects",
+  authenticateToken,
   async (req: Request<{}, {}, CreateProjectBody>, res: Response) => {
     const { name } = req.body;
     if (!name) {
       return res.status(400).json({ message: "Nome do projeto é obrigatório" });
     }
 
+    // Pega o id do usuário autenticado do token
+    const userId = (req as any).user.id;
+
     const id = await connection.query(
       "INSERT INTO app.projects (name, owner_user_id) VALUES ($1, $2) RETURNING id",
-      [name, 1]
+      [name, userId]
     );
 
     res.json({ id: id[0].id, name });
@@ -88,12 +92,10 @@ app.post("/tasks", async (req: Request, res: Response) => {
   }
 
   if (!["pending", "in_progress", "completed"].includes(status)) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Status inválido, informe os status possíveis: 'pending', 'in_progress', 'completed'",
-      });
+    return res.status(400).json({
+      message:
+        "Status inválido, informe os status possíveis: 'pending', 'in_progress', 'completed'",
+    });
   }
 
   if (!priority) {
@@ -147,7 +149,7 @@ app.post("/users", async (req: Request, res: Response) => {
   if (!password) {
     return res.status(400).json({ message: "Senha é obrigatória" });
   }
-  
+
   const passwordHash = await hash(password, 10);
   const id = await connection.query(
     "INSERT INTO app.users (name, email, password) VALUES ($1, $2, $3) RETURNING id",
@@ -166,7 +168,7 @@ app.post("/login", async (req: Request, res: Response) => {
   if (!password) {
     return res.status(400).json({ message: "Senha é obrigatória" });
   }
-  
+
   const user = await connection.query(
     "SELECT id, name, email, password FROM app.users WHERE email = $1",
     [email]
@@ -174,21 +176,24 @@ app.post("/login", async (req: Request, res: Response) => {
   if (user.length === 0) {
     return res.status(404).json({ message: "E-mail ou senha inválido" });
   }
-  
+
   const userData = user[0];
   const isPasswordValid = await compare(password, userData.password);
   if (!isPasswordValid) {
-    return res.status(401).json({ message: "E-mail ou senha inválido" }); 
+    return res.status(401).json({ message: "E-mail ou senha inválido" });
     //Retorna essa mensagem para não deixar claro se o e-mail ou a senha estão incorretos
   }
 
   //jwt
-  
+
   const acessToken = await sign(userData, process.env.JWT_SECRET as string);
-  return res.json({ id: userData.id, name: userData.name, email: userData.email, token: acessToken });
-
+  return res.json({
+    id: userData.id,
+    name: userData.name,
+    email: userData.email,
+    token: acessToken,
+  });
 });
-
 
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
