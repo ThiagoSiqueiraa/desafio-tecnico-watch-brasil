@@ -188,7 +188,7 @@ export class ProjectsController {
         message: "Projeto atual alterado com sucesso",
         currentProject: { id: project.id, name: project.name },
       });
-    } catch (e) {
+    } catch (e: any) {
       return res.status(500).json({ message: e.message || "Erro interno do servidor" });
     }
   }

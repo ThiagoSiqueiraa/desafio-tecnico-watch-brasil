@@ -51,8 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
   async function fetchMe() {
     if (!token.value) return
     try {
-      const authGateway = new AuthGateway() // passa o token
-      const data = await authGateway.me(token.value) // aqui você chama GET /me
+      const authGateway = new AuthGateway()
+      const data = await authGateway.me(token.value) 
       user.value = {
         id: data.id,
         name: data.name,
@@ -77,6 +77,17 @@ export const useAuthStore = defineStore('auth', () => {
     (u) =>
       u ? localStorage.setItem(USER_KEY, JSON.stringify(u)) : localStorage.removeItem(USER_KEY),
     { deep: true },
+  )
+  watch(
+    () => user.value?.currentProject?.id,
+    async (newProjectId, oldProjectId) => {
+      console.log("mudou projeto", { newProjectId, oldProjectId })
+      if (newProjectId && newProjectId !== oldProjectId) {
+        await fetchMe()
+            window.location.reload()
+
+      }
+    }
   )
 
   return { token, user, loading, error, isAuthenticated, role, login, logout, fetchMe }

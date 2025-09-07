@@ -3,7 +3,7 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
-    image: api-backend:2
+    image: api-backend:7
     init: true
     volumes:
       - type: bind
