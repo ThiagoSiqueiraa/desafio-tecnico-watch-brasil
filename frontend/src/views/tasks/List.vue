@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import TaskCard from '@/components/tasks/TaskCard.vue'
 import CreateTaskModal from '@/components/tasks/CreateTaskModal.vue'
-import { inject, onMounted, ref, toRaw } from 'vue'
+import { computed, inject, onMounted, ref, toRaw } from 'vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
-import { title } from 'process'
 
 const showDialogCreteTask = ref(false)
 const tasks: any = ref([])
@@ -15,9 +14,11 @@ function openCreateTaskModal() {
 const tasksGateway = inject('tasksGateway') as TasksGateway
 const authStore = useAuthStore()
 onMounted(async () => {
-  tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token) // assuming 1 is the projectId
-  console.log(toRaw(tasks.value))
+  tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token);
 })
+const pending = computed(() => tasks.value.filter((t: any) => t.status === 'pending'))
+const inProgress = computed(() => tasks.value.filter((t: any) => t.status === 'in_progress'))
+const completed = computed(() => tasks.value.filter((t: any) => t.status === 'completed'))
 </script>
 
 <template>
@@ -30,14 +31,13 @@ onMounted(async () => {
 
       <div class="column-cards">
         <TaskCard
-          v-for="task in tasks"
+          v-for="task in pending"
           :key="task.id"
           :priority="task.priority"
           :title="task.title"
           :startDate="task.created_at"
           :dueDate="task.due_date"
         />
-
       </div>
 
       <div class="column-footer">
@@ -49,7 +49,16 @@ onMounted(async () => {
 
     <div class="column">
       <div class="column-header"><h3>Em andamento</h3></div>
-      <div class="column-cards"><TaskCard /><TaskCard /><TaskCard /></div>
+      <div class="column-cards">
+        <TaskCard
+          v-for="task in inProgress"
+          :key="task.id"
+          :priority="task.priority"
+          :title="task.title"
+          :startDate="task.created_at"
+          :dueDate="task.due_date"
+        />
+      </div>
       <div class="column-footer">
         <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true"
           >Adicionar uma tarefa</v-btn
@@ -60,11 +69,14 @@ onMounted(async () => {
     <div class="column">
       <div class="column-header"><h3>Concluído</h3></div>
       <div class="column-cards">
-        <TaskCard />
-        <TaskCard />
-        <TaskCard />
-        <TaskCard />
-        <TaskCard />
+        <TaskCard
+          v-for="task in completed"
+          :key="task.id"
+          :priority="task.priority"
+          :title="task.title"
+          :startDate="task.created_at"
+          :dueDate="task.due_date"
+        />
       </div>
       <div class="column-footer">
         <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true"
