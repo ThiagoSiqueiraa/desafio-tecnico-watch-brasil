@@ -5,11 +5,11 @@ const props = defineProps(['priority'])
 
 function getColor() {
   switch (props.priority) {
-    case 'low_priority':
+    case 'low':
       return 'gray'
-    case 'medium_priority':
+    case 'medium':
       return 'orange'
-    case 'high_priority':
+    case 'high':
       return 'red'
     default:
       return 'gray'
@@ -18,11 +18,11 @@ function getColor() {
 
 function getLabel() {
   switch (props.priority) {
-    case 'low_priority':
+    case 'low':
       return 'Baixa prioridade'
-    case 'medium_priority':
+    case 'medium':
       return 'Média prioridade'
-    case 'high_priority':
+    case 'high':
       return 'Alta prioridade'
     default:
       return '?'
