@@ -60,6 +60,8 @@ const submit = async () => {
         confirmButtonText: 'OK',
         customClass: {
           confirmButton: 'my-custom-button-text',
+                cancelButton: 'my-custom-button-text',
+
         },
       })
     } else {
