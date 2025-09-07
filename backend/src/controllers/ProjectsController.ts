@@ -144,4 +144,52 @@ export class ProjectsController {
 
     res.json(members);
   }
+
+  async changeActualProject(req: Request, res: Response) {
+    try {
+      const { projectId } = req.params;
+
+      const userId = (req as any).user.id;
+
+      const userRepository = await AppDataSource.getRepository("User");
+      const user = await userRepository.findOne({
+        where: { id: userId },
+        relations: ["currentProject"],
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "Usuário não encontrado" });
+      }
+
+      const projectRepository = await AppDataSource.getRepository("Project");
+      const project = await projectRepository.findOne({
+        where: { id: Number(projectId) },
+      });
+
+      if (!project) {
+        return res.status(404).json({ message: "Projeto não encontrado" });
+      }
+
+        const projectMemberRepository = await AppDataSource.getRepository(
+            "ProjectMember"
+        );
+        const isMember = await projectMemberRepository.findOne({
+            where: { project: { id: project.id }, user: { id: user.id } },
+        });
+        
+        if (!isMember) {
+            return res.status(403).json({ message: "Usuário não é membro do projeto" });
+        }
+
+      user.currentProject = project;
+      await userRepository.save(user);
+
+      res.json({
+        message: "Projeto atual alterado com sucesso",
+        currentProject: { id: project.id, name: project.name },
+      });
+    } catch (e) {
+      return res.status(500).json({ message: e.message || "Erro interno do servidor" });
+    }
+  }
 }
