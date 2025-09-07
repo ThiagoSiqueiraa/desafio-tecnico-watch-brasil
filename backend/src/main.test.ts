@@ -125,3 +125,23 @@ test("Deve criar uma tarefa a um projeto", async () => {
   expect(outputCreateTask.dueDate).toBe(taskInput.dueDate);
 });
   
+
+test("Deve criar um usuário com sucesso", async () => {
+  //Given
+  const input = {
+    name: `user${Math.random().toString(36).substring(2, 10)}`,
+    email: `user${Math.random().toString(36).substring(2, 10)}@example.com`,
+    password: "password123",
+  };
+  
+  //When
+  const response = await axios.post("http://localhost:3000/users", input);
+  const output = response.data;
+  //Then
+  expect(response.status).toBe(200);
+  expect(output.id).toBeDefined();
+  expect(output.name).toBe(input.name);
+  expect(output.email).toBe(input.email);
+  expect(output).not.toHaveProperty("password");
+  
+})
