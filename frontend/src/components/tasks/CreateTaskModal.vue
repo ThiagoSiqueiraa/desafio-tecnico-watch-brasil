@@ -60,8 +60,7 @@ const submit = async () => {
         confirmButtonText: 'OK',
         customClass: {
           confirmButton: 'my-custom-button-text',
-                cancelButton: 'my-custom-button-text',
-
+          cancelButton: 'my-custom-button-text',
         },
       })
     } else {
@@ -185,6 +184,14 @@ onMounted(async () => {
                     :min="new Date()"
                   />
                 </div>
+              </v-col>
+              <v-col cols="12">
+                <div class="mb-2 font-weight-bold">Status:</div>
+                <v-radio-group v-model="statusState" row>
+                  <v-radio label="Pendente" value="pending" />
+                  <v-radio label="Em andamento" value="in_progress" />
+                  <v-radio label="Concluído" value="completed" />
+                </v-radio-group>
               </v-col>
               <v-col cols="12">
                 <div class="mb-2 font-weight-bold">Membros:</div>
