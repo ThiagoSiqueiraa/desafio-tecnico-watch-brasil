@@ -67,7 +67,7 @@ export class TasksController {
 
     const projectId = actualProjectUser[0].currentProject.id;
 
-    const tasksRepository = AppDataSource.getRepository("Task");
+    const tasksRepository = await AppDataSource.getRepository("Task");
     // Cria as entidades de checklist associadas à tarefa
 
     const newTask = await tasksRepository.create({
@@ -106,7 +106,7 @@ export class TasksController {
       return res.status(400).json({ message: "ID do projeto é obrigatório" });
     }
 
-    const tasksRepository = AppDataSource.getRepository("Task");
+    const tasksRepository = await AppDataSource.getRepository("Task");
     const tasks = await tasksRepository.find({
       where: { project: { id: Number(projectId) } },
       relations: ["checklist"],

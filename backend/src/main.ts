@@ -21,56 +21,6 @@ interface CreateProjectBody {
   name: string;
 }
 
-app.post(
-  "/projects",
-  verifyToken,
-  async (req: Request<{}, {}, CreateProjectBody>, res: Response) => {
-    const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ message: "Nome do projeto é obrigatório" });
-    }
-
-    // Pega o id do usuário autenticado do token
-    const userId = (req as any).user.id;
-
-    const id = await connection.query(
-      "INSERT INTO app.projects (name, owner_user_id) VALUES ($1, $2) RETURNING id",
-      [name, userId]
-    );
-
-    res.json({ id: id[0].id, name });
-  }
-);
-
-app.get("/projects/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const project = await connection.query(
-    "SELECT id, name FROM app.projects WHERE id = $1",
-    [id]
-  );
-
-  if (project.length === 0) {
-    return res.status(404).json({ message: "Projeto não encontrado" });
-  }
-
-  res.json(project[0]);
-});
-
-app.get("/projects", async (req: Request, res: Response) => {
-  const { userId } = req.query;
-  const projects = await connection.query(
-    "SELECT id, name FROM app.projects WHERE owner_user_id = $1",
-    [userId]
-  );
-  res.json(projects);
-});
-
-app.delete("/projects/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  await connection.query("DELETE FROM app.projects WHERE id = $1", [id]);
-  res.status(204).send();
-});
-
 app.post("/users", async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   if (!name) {

@@ -1,0 +1,62 @@
+import { Request, Response } from "express";
+import { AppDataSource } from "../data-source";
+
+export class ProjectsController {
+  constructor() {}
+
+  async create(req: Request, res: Response) {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: "Nome do projeto é obrigatório" });
+    }
+    const userId = (req as any).user.id;
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.create({
+      name,
+      ownerUser: { id: userId },
+    });
+    const output = await projectRepository.save(project);
+    res.json(output);
+  }
+
+  async getById(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.findOne({
+      where: { id: Number(id) },
+      select: ["id", "name"],
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Projeto não encontrado" });
+    }
+
+    res.json(project);
+  }
+
+  async list(req: Request, res: Response) {
+    const { userId } = req.query;
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const projects = await projectRepository.find({
+      where: { ownerUser: { id: Number(userId) } },
+      select: ["id", "name"],
+    });
+
+    res.json(projects);
+  }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.findOne({
+      where: { id: Number(id) },
+      select: ["id"],
+    });
+    if (!project) {
+      return res.status(404).json({ message: "Projeto não encontrado" });
+    }
+    await projectRepository.remove(project);
+    res.status(204).send();
+  }
+}
