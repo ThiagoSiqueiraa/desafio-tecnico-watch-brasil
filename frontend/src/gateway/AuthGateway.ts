@@ -7,6 +7,16 @@ export interface UserAuthenticated {
   token: string
 }
 
+export interface MeResponse {
+  id: number
+  name: string
+  email: string
+  currentProject?: {
+    id: number
+    name: string
+  } | null
+}
+
 export interface UserInput {
   email: string
   password: string
@@ -24,4 +34,14 @@ export default class AuthGateway {
 
     return response.data
   }
+
+  async me(token: string): Promise<MeResponse> {
+    const response = await axios.get<MeResponse>(`${this.baseUrl}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  }
+
 }

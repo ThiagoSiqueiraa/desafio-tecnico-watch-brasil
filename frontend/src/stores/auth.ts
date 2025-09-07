@@ -1,10 +1,16 @@
 // src/stores/auth.ts
 import { defineStore } from 'pinia'
-import { ref, computed, inject, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { UserAuthenticated } from '@/gateway/AuthGateway'
-import AuthGateway from '@/gateway/AuthGateway';
+import AuthGateway from '@/gateway/AuthGateway'
 
-type User = { id: number; name: string; email: string; role?: string }
+type User = {
+  id: number
+  name: string
+  email: string
+  role?: string
+  currentProject?: { id: number; name: string } | null
+}
 
 const TOKEN_KEY = 'app:token'
 const USER_KEY = 'app:user'
@@ -21,11 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
   const role = computed(() => user.value?.role || 'user')
 
   async function login(email: string, password: string) {
-    console.log('inside auth')
     loading.value = true
     error.value = ''
     try {
-      const authGateway = new AuthGateway();
+      const authGateway = new AuthGateway()
       const data = (await authGateway.login({ email, password })) as UserAuthenticated
       token.value = data.token
       user.value = {
@@ -33,6 +38,8 @@ export const useAuthStore = defineStore('auth', () => {
         id: data.id,
         name: data.name,
       }
+      // já pega as informações do /me depois do login
+      await fetchMe()
     } catch (err: any) {
       error.value = err?.response?.data?.message || 'Falha no login'
       throw err
@@ -41,9 +48,27 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function fetchMe() {
+    if (!token.value) return
+    try {
+      const authGateway = new AuthGateway() // passa o token
+      const data = await authGateway.me(token.value) // aqui você chama GET /me
+      user.value = {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        currentProject: data.currentProject,
+      }
+    } catch (err) {
+      console.error('Erro ao buscar usuário /me:', err)
+    }
+  }
+
   function logout() {
     token.value = ''
     user.value = null
+    localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(USER_KEY)
   }
 
   watch(token, (t) => (t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY)))
@@ -54,5 +79,5 @@ export const useAuthStore = defineStore('auth', () => {
     { deep: true },
   )
 
-  return { token, user, loading, error, isAuthenticated, role, login, logout }
+  return { token, user, loading, error, isAuthenticated, role, login, logout, fetchMe }
 })
