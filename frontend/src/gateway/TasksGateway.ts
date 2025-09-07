@@ -48,4 +48,13 @@ export default class TasksGateway {
     )
     return response.data
   }
+  
+  async getById(id: number, token: string): Promise<any> {
+    const response = await axios.get<any>(`${this.baseUrl}/tasks/getById/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  }
 }
