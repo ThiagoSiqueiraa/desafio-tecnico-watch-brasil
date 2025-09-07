@@ -5,24 +5,37 @@ import { computed, inject, onMounted, ref, toRaw } from 'vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
 
-const showDialogCreteTask = ref(false)
+const showDialogCreateTask = ref(false)
 const tasks: any = ref([])
-function openCreateTaskModal() {
-  showDialogCreteTask.value = true
+const status = ref('')
+
+function openCreateTaskModal(pStatus: string) {
+  status.value = pStatus
+  showDialogCreateTask.value = true
 }
 
 const tasksGateway = inject('tasksGateway') as TasksGateway
 const authStore = useAuthStore()
 onMounted(async () => {
-  tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token);
+  tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token)
 })
 const pending = computed(() => tasks.value.filter((t: any) => t.status === 'pending'))
 const inProgress = computed(() => tasks.value.filter((t: any) => t.status === 'in_progress'))
 const completed = computed(() => tasks.value.filter((t: any) => t.status === 'completed'))
+
+async function refreshTasks() {
+  tasks.value = []
+  tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token)
+}
 </script>
 
 <template>
-  <CreateTaskModal v-model="showDialogCreteTask" v-if="showDialogCreteTask" />
+  <CreateTaskModal
+    :model-value="showDialogCreateTask"
+    v-if="showDialogCreateTask"
+    :status="status"
+    @on-success="refreshTasks"
+  />
   <div class="wrapper-tasks">
     <div class="column">
       <div class="column-header">
@@ -43,7 +56,7 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
       </div>
 
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text" @click="openCreateTaskModal()"
+        <v-btn block prepend-icon="mdi-plus" variant="text" @click="openCreateTaskModal('pending')"
           >Adicionar uma tarefa</v-btn
         >
       </div>
@@ -62,7 +75,11 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
         />
       </div>
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true"
+        <v-btn
+          block
+          prepend-icon="mdi-plus"
+          variant="text"
+          @click="openCreateTaskModal('in_progress')"
           >Adicionar uma tarefa</v-btn
         >
       </div>
@@ -81,7 +98,11 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
         />
       </div>
       <div class="column-footer">
-        <v-btn block prepend-icon="mdi-plus" variant="text" @click="showDialogCreteTask = true"
+        <v-btn
+          block
+          prepend-icon="mdi-plus"
+          variant="text"
+          @click="openCreateTaskModal('completed')"
           >Adicionar uma tarefa</v-btn
         >
       </div>

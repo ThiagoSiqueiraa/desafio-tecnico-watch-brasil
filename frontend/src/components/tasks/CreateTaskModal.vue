@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
+import type TasksGateway from '@/gateway/TasksGateway'
+import { useAuthStore } from '@/stores/auth'
 
 type Member = {
   name: string
@@ -8,20 +10,61 @@ type Member = {
   id: number
 }
 
-const form = ref()
-const name = ref('')
+const tasksGateway = inject('tasksGateway') as TasksGateway
+const title = ref('')
+const priority = ref('')
+const dueDate = ref<Date | null>(null)
 const newChecklistItem = ref('')
 const description = ref('')
 const tasks = ref<{ title: string }[]>([])
 const showDialogAddMember = ref(false)
 const members = ref<Member[]>([])
+const emit = defineEmits(['close', 'save', 'onSuccess'])
 
-const showDialog = ref(false)
+const { status, modelValue } = defineProps(['status', 'modelValue'])
+const showDialog = ref(modelValue)
+const priorityItems = [
+  {
+    value: 'low',
+    label: 'Baixa',
+  },
+  {
+    value: 'medium',
+    label: 'Média',
+  },
+  {
+    value: 'high',
+    label: 'Alta',
+  },
+]
 
-const submit = () => {
-  if (form.value?.validate()) {
+const submit = async () => {
+  try {
+    const taskData = {
+      title: title.value,
+      description: description.value,
+      priority: priority.value,
+      dueDate: dueDate.value,
+      checklist: tasks.value,
+      members: members.value,
+    }
+    console.log('Dados da tarefa:', taskData)
+    await tasksGateway.create({ ...taskData, status }, useAuthStore().token)
+    resetForm()
     showDialog.value = false
+    emit('onSuccess')
+  } catch (e) {
+    console.log(e)
   }
+}
+
+function resetForm() {
+  title.value = ''
+  description.value = ''
+  priority.value = ''
+  dueDate.value = null
+  tasks.value = []
+  members.value = []
 }
 
 function addChecklistItem() {
@@ -46,7 +89,6 @@ function handleCancel() {
 </script>
 
 <template>
-
   <v-dialog v-model="showDialog" max-width="700">
     <template #default>
       <v-card>
@@ -56,7 +98,7 @@ function handleCancel() {
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="name"
+                  v-model="title"
                   label="Título da tarefa"
                   :rules="[(v) => !!v || 'Título é obrigatório']"
                   required
@@ -76,8 +118,11 @@ function handleCancel() {
               </v-col>
               <v-col cols="4">
                 <v-select
+                  v-model="priority"
                   placeholder="Selecione a prioridade da tarefa"
-                  :items="['Baixa', 'Média', 'Alta']"
+                  :items="priorityItems"
+                  item-title="label"
+                  item-value="value"
                   label="Prioridade"
                   required
                   density="compact"
@@ -87,6 +132,7 @@ function handleCancel() {
               <v-col cols="8">
                 <div class="d-flex align-center ga-4">
                   <v-date-input
+                    v-model="dueDate"
                     label="Vencimento"
                     variant="outlined"
                     density="compact"
@@ -105,7 +151,6 @@ function handleCancel() {
                     prepend-icon="mdi-account-multiple-plus"
                     v-tooltip:bottom="'Adicionar membros à tarefa'"
                   >
-
                   </v-btn>
                 </div>
               </v-col>
@@ -163,6 +208,4 @@ function handleCancel() {
       </v-card>
     </template>
   </v-dialog>
-
-
 </template>

@@ -17,4 +17,35 @@ export default class TasksGateway {
     })
     return response.data
   }
+
+  async create(
+    input: {
+      title: string
+      description?: string
+      priority: string
+      status: string
+      dueDate: Date | null
+      checklist: { title: string }[]
+    },
+    token: string,
+  ): Promise<any> {
+    const { title, description, priority, status, dueDate, checklist } = input
+    const response = await axios.post<any>(
+      `${this.baseUrl}/tasks`,
+      {
+        title,
+        description,
+        priority,
+        status,
+        dueDate,
+        checklist,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    return response.data
+  }
 }

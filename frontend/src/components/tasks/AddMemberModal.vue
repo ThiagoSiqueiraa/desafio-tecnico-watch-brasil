@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, shallowRef, toRaw } from 'vue'
+import { ref, shallowRef, toRaw, useAttrs } from 'vue'
 
 type Member = {
   name: string
   email: string
   id: number
 }
+defineOptions({ inheritAttrs: false })         // não herdar automaticamente p/ root
+const attrs = useAttrs()
 
-const dialog = shallowRef(false)
+const props = defineProps<{ modelValue: boolean }>()
 const members = ref<Member[]>([
   {
     name: 'Thiago Siqueira',
@@ -46,8 +48,7 @@ const close = () => emit('update:modelValue', false)
 
 <template>
   <v-dialog
-    :model-value="dialog"
-    @update:modelValue="(v) => $emit('update:modelValue', v)"
+    v-model="props.modelValue"
     max-width="600"
   >
     <v-card prepend-icon="mdi-account" title="Membros da tarefa">
