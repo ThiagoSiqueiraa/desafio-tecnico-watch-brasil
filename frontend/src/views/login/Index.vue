@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import Swal from 'sweetalert2'
 import { ref } from 'vue'
 const email = ref<string>('')
 const password = ref<string>('')
@@ -10,7 +11,16 @@ async function login() {
     await auth.login(email.value, password.value)
     window.location.href = '/'
   } catch (e: any) {
-    console.log(e.response.data.message)
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao fazer login',
+      text: e?.response?.data?.message || 'Tente novamente mais tarde',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'my-custom-button-text',
+      },
+    })
   }
 }
 </script>
