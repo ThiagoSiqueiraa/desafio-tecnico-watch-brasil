@@ -9,8 +9,12 @@ export interface Project {
 export default class ProjectGateway {
   private baseUrl: string = 'http://localhost:3000'
 
-  async list(): Promise<Project[]> {
-    const response = await axios.get<Project[]>(`${this.baseUrl}/projects?userId=1`)
+  async list(token: string, userId: number): Promise<Project[]> {
+    const response = await axios.get<Project[]>(`${this.baseUrl}/projects?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     return response.data
   }
 
@@ -24,10 +28,10 @@ export default class ProjectGateway {
       `${this.baseUrl}/projects`,
       { name: title },
       {
-      headers: {
-        Authorization: `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-      }
     )
     return response.data
   }

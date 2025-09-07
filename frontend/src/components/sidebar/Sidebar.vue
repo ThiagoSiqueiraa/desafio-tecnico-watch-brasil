@@ -30,15 +30,13 @@ async function handleSubmit(event: { title: string }) {
   showAddNewProject.value = false
 }
 
-let actualProject = 'Projeto X'
 
 async function getPossibleProjects() {
   return projects.value
 }
 
 onMounted(async () => {
-  const response = await projectGateway.list()
-  console.log(projects)
+  const response = await projectGateway.list(useAuthStore().token, useAuthStore().user!.id)
   projects.value = response
 })
 </script>
@@ -60,7 +58,12 @@ onMounted(async () => {
 
     <v-divider />
 
-    <v-list-item prepend-icon="mdi-folder" title="Voce está em" :subtitle="user?.currentProject?.name" rounded="lg">
+    <v-list-item
+      prepend-icon="mdi-folder"
+      title="Voce está em"
+      :subtitle="user?.currentProject?.name"
+      rounded="lg"
+    >
       <template #append>
         <v-menu>
           <template #activator="{ props }">
