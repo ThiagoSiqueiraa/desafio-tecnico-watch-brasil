@@ -57,4 +57,20 @@ export default class TasksGateway {
     })
     return response.data
   }
+
+  async update(id: number, input: {
+    title: string
+    description?: string
+    priority: string
+    status: string
+    dueDate: Date | null
+    checklist: { title: string }[]
+  }, token: string): Promise<any> {
+    const response = await axios.put<any>(`${this.baseUrl}/tasks/${id}`, input, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  }
 }

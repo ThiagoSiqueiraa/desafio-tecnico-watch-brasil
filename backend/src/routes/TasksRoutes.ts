@@ -7,4 +7,5 @@ const taskController = new TasksController();
 router.post("/", verifyToken, taskController.create);
 router.get("/:projectId", verifyToken, taskController.listByProject);
 router.get("/getById/:id", verifyToken, taskController.getById);
+router.put("/:id", verifyToken, taskController.update);
 export default router;

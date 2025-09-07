@@ -31,8 +31,9 @@ async function refreshTasks() {
 
 const taskIdToEdit = ref(null)
 
-function openEditTaskModal(task: any){
+function openEditTaskModal(task: any, pStatus: string ) {
   taskIdToEdit.value = task.id
+  status.value = pStatus;
   showDialogCreateTask.value = true
 }
 </script>
@@ -54,7 +55,7 @@ function openEditTaskModal(task: any){
 
       <div class="column-cards">
         <TaskCard
-          @click="openEditTaskModal(task)"
+          @click="openEditTaskModal(task, 'pending')"
           v-for="task in pending"
           :key="task.id"
           :priority="task.priority"
@@ -85,6 +86,7 @@ function openEditTaskModal(task: any){
           :dueDate="task.dueDate"
           :completed-tasks="task.completedSubtasks"
           :total-tasks="task.totalSubtasks"
+          @click="openEditTaskModal(task, 'in_progress')"
         />
       </div>
       <div class="column-footer">
@@ -110,6 +112,7 @@ function openEditTaskModal(task: any){
           :dueDate="task.dueDate"
           :completed-tasks="task.completedSubtasks"
           :total-tasks="task.totalSubtasks"
+          @click="openEditTaskModal(task, 'completed')"
         />
       </div>
       <div class="column-footer">

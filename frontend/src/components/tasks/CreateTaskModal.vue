@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue'
+import { inject, onMounted, ref, watch } from 'vue'
 import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
@@ -20,8 +20,9 @@ const tasks = ref<{ title: string }[]>([])
 const showDialogAddMember = ref(false)
 const members = ref<Member[]>([])
 const emit = defineEmits(['close', 'save', 'onSuccess'])
-
-const { status, modelValue } = defineProps(['status', 'modelValue'])
+const isEditing = ref<boolean>(false)
+const { status, modelValue, taskId } = defineProps(['status', 'modelValue', 'taskId'])
+const statusState = ref(status || 'pending')
 const showDialog = ref(modelValue)
 const priorityItems = [
   {
@@ -47,10 +48,20 @@ const submit = async () => {
       dueDate: dueDate.value,
       checklist: tasks.value,
       members: members.value,
+      status: statusState.value,
     }
     console.log('Dados da tarefa:', taskData)
-    await tasksGateway.create({ ...taskData, status }, useAuthStore().token)
-    resetForm()
+
+    console.log('isEditing:', isEditing.value, 'taskId:', taskId)
+    if (isEditing && taskId) {
+      await tasksGateway.update(taskId, taskData, useAuthStore().token)
+      emit('onSuccess')
+      showDialog.value = false
+      return
+    } else {
+      await tasksGateway.create({ ...taskData, status: statusState.value }, useAuthStore().token)
+    }
+
     showDialog.value = false
     emit('onSuccess')
   } catch (e) {
@@ -90,13 +101,29 @@ function handleCancel() {
 watch(showDialog, (val) => {
   if (!val) emit('close')
 })
+
+onMounted(async () => {
+  if (taskId) {
+    // Fetch task details and populate form for editing
+    const task = await tasksGateway.getById(taskId, useAuthStore().token)
+    title.value = task.title
+    description.value = task.description
+    priority.value = task.priority
+    dueDate.value = task.dueDate ? new Date(task.dueDate) : null
+    tasks.value = task.checklist || []
+    members.value = task.members || []
+    showDialog.value = true
+    isEditing.value = true
+  }
+})
 </script>
 
 <template>
   <v-dialog v-model="showDialog" max-width="700">
     <template #default>
       <v-card>
-        <v-card-title>Criar tarefa</v-card-title>
+        <v-card-title>{{ isEditing ? 'Editar' : 'Criar' }} tarefa</v-card-title>
+
         <v-card-text>
           <v-form ref="form" v-slot="{ validate }">
             <v-row>
@@ -205,7 +232,9 @@ watch(showDialog, (val) => {
             </v-row>
             <div class="d-flex justify-end">
               <v-btn text @click="showDialog = false" class="mt-4 mr-2">Cancelar</v-btn>
-              <v-btn color="primary" class="mt-4" @click="submit">Criar</v-btn>
+              <v-btn color="primary" class="mt-4" @click="submit">{{
+                isEditing ? 'Salvar' : 'Criar'
+              }}</v-btn>
             </div>
           </v-form>
         </v-card-text>
