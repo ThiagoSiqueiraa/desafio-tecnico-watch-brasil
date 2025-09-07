@@ -117,5 +117,28 @@ app.post("/tasks", async (req: Request, res: Response) => {
   });
 });
 
+app.post("/users", async (req: Request, res: Response) => {
+  const { name, email, password } = req.body;
+  if (!name) {
+    return res.status(400).json({ message: "Nome  é obrigatório" });
+  }
+
+  if (!email) {
+    return res.status(400).json({ message: "Email é obrigatório" });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: "Senha é obrigatória" });
+  }
+  
+  const id = await connection.query(
+    "INSERT INTO app.users (name, email, password) VALUES ($1, $2, $3) RETURNING id",
+    [name, email, password]
+  );
+
+  res.json({ id: id[0].id, name, email });
+});
+
+
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
