@@ -130,4 +130,40 @@ export class TasksController {
     });
     res.json(output);
   }
+
+  async getById(req: Request, res: Response) {
+    const { id } = req.params;
+    console.log("Received request to get task by ID:", id);
+    
+    if (!id) { 
+        return res.status(400).json({ message: "ID da tarefa é obrigatório" });
+    }
+    console.log("Fetching task with ID:", id);
+
+    const tasksRepository = await AppDataSource.getRepository("Task");
+    const task = await tasksRepository.findOne({
+      where: { id: Number(id) },
+      relations: ["checklist", "project"],
+    });
+
+    if (!task) {
+      return res.status(404).json({ message: "Tarefa não encontrada" });
+    }
+    
+    console.log(task)
+    const output = {
+        id: task.id,
+        title: task.title,
+        status: task.status,
+        priority: task.priority,
+        dueDate: task.dueDate,
+        description: task.description,
+        createdAt: task.createdAt,
+        updatedAt: task.updatedAt,
+        checklist: task.checklist,
+        projectId: task.project.id,
+    };
+    
+    res.json(output);
+  }
 }
