@@ -192,4 +192,56 @@ export class ProjectsController {
       return res.status(500).json({ message: e.message || "Erro interno do servidor" });
     }
   }
+
+  async removeMember(req: Request, res: Response) {
+    const { projectId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: "ID do usuário é obrigatório" });
+        }
+    const userRepository = await AppDataSource.getRepository("User");
+    const user = await userRepository.findOne({
+      where: { id: Number(userId) },
+      select: ["id", "name", "email"],
+    });
+    
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.findOne({
+        where: { id: Number(projectId) },
+        relations: ["members", "ownerUser", "members.user"],
+    });
+    
+    if (!project) {
+        return res.status(404).json({ message: "Projeto não encontrado" });
+    }
+    if (Number(project.ownerUser.id) === Number(user.id)) {
+        return res.status(400).json({ message: "O dono do projeto não pode ser removido" });
+    }
+
+    //verifica se o usuário é o dono do projeto
+    const requestingUserId = (req as any).user.id;
+    if (project.ownerUser.id !== requestingUserId) {
+        return res.status(403).json({ message: "Apenas o dono do projeto pode remover membros" });
+    }
+    
+    const projectMemberRepository = await AppDataSource.getRepository(
+        "ProjectMember"
+    );
+    const membership = await projectMemberRepository.findOne({
+        where: { project: { id: project.id }, user: { id: user.id } },
+    });
+    
+    if (!membership) {
+        return res.status(400).json({ message: "Usuário não é membro do projeto" });
+    }
+    
+    await projectMemberRepository.remove(membership);
+    
+    res.json({ message: "Membro removido com sucesso", member: user });
+  }
 }

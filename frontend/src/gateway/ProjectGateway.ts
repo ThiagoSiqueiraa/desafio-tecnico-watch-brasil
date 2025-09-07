@@ -80,5 +80,14 @@ export default class ProjectGateway {
     return response.data
   }
   
+  async removeMember(projectId: number, userId: number, token: string): Promise<{ message: string }> {
+    const response = await axios.delete<{ message: string }>(`${this.baseUrl}/projects/removeMember/${projectId}`, {
+      data: { userId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  }
   
 }

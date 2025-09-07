@@ -17,7 +17,6 @@ const headers = [
 ]
 
 function removeMember(member: any) {
-  console.log(member)
   Swal.fire({
     title: 'Tem certeza?',
     text: 'Deseja realmente remover este membro?',
@@ -33,6 +32,33 @@ function removeMember(member: any) {
     },
   }).then((result) => {
     if (result.isConfirmed) {
+      projectGateway
+        .removeMember(useAuthStore().user!.currentProject!.id, member.id, useAuthStore().token)
+        .then(() => {
+          members.value = members.value.filter((m: any) => m.id !== member.id)
+          Swal.fire({
+            icon: 'success',
+            title: 'Membro removido com sucesso!',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'my-custom-button-text',
+            },
+          })
+        })
+        .catch((e: any) => {
+          console.log(e)
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao remover membro',
+            text: e?.response?.data?.message || 'Tente novamente mais tarde',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'my-custom-button-text',
+            },
+          })
+        })
     }
   })
 }
@@ -62,7 +88,7 @@ async function handleSubmit(event: { email: string }) {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'OK',
       customClass: {
-          confirmButton: 'my-custom-button-text',
+        confirmButton: 'my-custom-button-text',
       },
     })
   }

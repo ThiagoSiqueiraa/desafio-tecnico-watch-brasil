@@ -11,5 +11,6 @@ router.delete("/:id", verifyToken, projectController.delete);
 router.post("/addMember/:projectId", verifyToken, projectController.addMember);
 router.get("/members/:projectId", verifyToken, projectController.listMembers);
 router.put("/changeActualProject/:projectId", verifyToken, projectController.changeActualProject);
+router.delete("/removeMember/:projectId", verifyToken, projectController.removeMember);
 export default router;
 
