@@ -252,7 +252,7 @@ onMounted(async () => {
                 >
               </v-col>
             </v-row>
-            <div class="d-flex justify-end">
+            <div class="d-flex justify-space-between">
               <v-btn text @click="showDialog = false" class="mt-4 mr-2">Cancelar</v-btn>
               <v-btn color="primary" class="mt-4" @click="submit">{{
                 isEditing ? 'Salvar' : 'Criar'
