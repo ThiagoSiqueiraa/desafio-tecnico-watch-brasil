@@ -6,6 +6,7 @@ import { sign, verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
+import { TaskChecklist } from "./entities/TaskChecklist";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -258,7 +259,22 @@ app.get("/tasks/:projectId", async (req: Request, res: Response) => {
     order: { updatedAt: "ASC" },
   });
 
-  res.json(tasks);
+  const output = tasks.map((t) => {
+    return {
+      id: t.id,
+      title: t.title,
+      status: t.status,
+      priority: t.priority,
+      dueDate: t.dueDate,
+      description: t.description,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      completedSubtasks:
+        t.checklist?.filter((c: TaskChecklist) => c.isDone).length || 0,
+      totalSubtasks: t.checklist?.length || 0,
+    };
+  });
+  res.json(output);
 });
 
 console.log("Server running on http://localhost:3000");
