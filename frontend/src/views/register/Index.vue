@@ -16,7 +16,7 @@ const snackbarColor = ref<'success' | 'error' | ''>('')
 const snackbarTimeout = ref(4000)
 
 let redirectTimer: number | undefined
-const redirectDelayMs = 1800 
+const redirectDelayMs = 1800
 
 async function signup() {
   try {
@@ -105,6 +105,10 @@ onBeforeUnmount(() => {
                 required
               />
               <v-btn type="submit" class="w-100" color="primary">Cadastre-se</v-btn>
+              <small class="text-center d-block w-100 mt-4">
+                Já possui conta?
+                <RouterLink to="/login" class="text-primary font-weight-medium">Entrar</RouterLink>
+              </small>
             </form>
           </v-card-text>
         </v-card>
