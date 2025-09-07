@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { TaskChecklist } from "../entities/TaskChecklist";
 
+const priorityDictonary: {
+  [key: string]: number;
+} = { low: 1, medium: 2, high: 3 };
+
+const reversePriorityDictonary: {
+    [key: number]: string;
+} = { 1: 'low', 2: 'medium', 3: 'high' };
+
 export class TasksController {
   constructor() {}
 
@@ -26,10 +34,6 @@ export class TasksController {
     if (!priority) {
       return res.status(400).json({ message: "Prioridade é obrigatória" });
     }
-
-    const priorityDictonary: {
-      [key: string]: number;
-    } = { low: 1, medium: 2, high: 3 };
 
     if (!dueDate) {
       return res
@@ -118,7 +122,7 @@ export class TasksController {
         id: t.id,
         title: t.title,
         status: t.status,
-        priority: t.priority,
+        priority: reversePriorityDictonary[t.priority],
         dueDate: t.dueDate,
         description: t.description,
         createdAt: t.createdAt,
@@ -134,9 +138,9 @@ export class TasksController {
   async getById(req: Request, res: Response) {
     const { id } = req.params;
     console.log("Received request to get task by ID:", id);
-    
-    if (!id) { 
-        return res.status(400).json({ message: "ID da tarefa é obrigatório" });
+
+    if (!id) {
+      return res.status(400).json({ message: "ID da tarefa é obrigatório" });
     }
     console.log("Fetching task with ID:", id);
 
@@ -149,21 +153,20 @@ export class TasksController {
     if (!task) {
       return res.status(404).json({ message: "Tarefa não encontrada" });
     }
-    
-    console.log(task)
+
     const output = {
-        id: task.id,
-        title: task.title,
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.dueDate,
-        description: task.description,
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-        checklist: task.checklist,
-        projectId: task.project.id,
+      id: task.id,
+      title: task.title,
+      status: task.status,
+      dueDate: task.dueDate,
+      priority: reversePriorityDictonary[task.priority],
+      description: task.description,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      checklist: task.checklist,
+      projectId: task.project.id,
     };
-    
+
     res.json(output);
   }
 }
