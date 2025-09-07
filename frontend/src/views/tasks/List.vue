@@ -28,6 +28,13 @@ async function refreshTasks() {
   tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token)
   showDialogCreateTask.value = false
 }
+
+const taskIdToEdit = ref(null)
+
+function openEditTaskModal(task: any){
+  taskIdToEdit.value = task.id
+  showDialogCreateTask.value = true
+}
 </script>
 
 <template>
@@ -37,6 +44,7 @@ async function refreshTasks() {
     :status="status"
     @close="showDialogCreateTask = false"
     @on-success="refreshTasks"
+    :taskId="taskIdToEdit"
   />
   <div class="wrapper-tasks">
     <div class="column">
@@ -46,12 +54,13 @@ async function refreshTasks() {
 
       <div class="column-cards">
         <TaskCard
+          @click="openEditTaskModal(task)"
           v-for="task in pending"
           :key="task.id"
           :priority="task.priority"
           :title="task.title"
-          :startDate="task.created_at"
-          :dueDate="task.due_date"
+          :startDate="task.createdAt"
+          :dueDate="task.dueDate"
           :completed-tasks="task.completedSubtasks"
           :total-tasks="task.totalSubtasks"
         />
@@ -72,8 +81,8 @@ async function refreshTasks() {
           :key="task.id"
           :priority="task.priority"
           :title="task.title"
-          :startDate="task.created_at"
-          :dueDate="task.due_date"
+          :startDate="task.createdAt"
+          :dueDate="task.dueDate"
           :completed-tasks="task.completedSubtasks"
           :total-tasks="task.totalSubtasks"
         />
@@ -97,8 +106,8 @@ async function refreshTasks() {
           :key="task.id"
           :priority="task.priority"
           :title="task.title"
-          :startDate="task.created_at"
-          :dueDate="task.due_date"
+          :startDate="task.createdAt"
+          :dueDate="task.dueDate"
           :completed-tasks="task.completedSubtasks"
           :total-tasks="task.totalSubtasks"
         />
