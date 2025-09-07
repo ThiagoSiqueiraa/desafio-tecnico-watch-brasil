@@ -99,7 +99,7 @@ test("Deve criar uma tarefa a um projeto", async () => {
   expect(responseCreateProject.status).toBe(200);
   expect(outputCreateProject.id).toBeDefined();
   const projectId = outputCreateProject.id;
-  
+
   const taskInput = {
     title: "Minha tarefa",
     projectId: projectId,
@@ -114,7 +114,7 @@ test("Deve criar uma tarefa a um projeto", async () => {
     taskInput
   );
   const outputCreateTask = responseCreateTask.data;
-  
+
   //Then
   expect(responseCreateTask.status).toBe(200);
   expect(outputCreateTask.id).toBeDefined();
@@ -124,7 +124,6 @@ test("Deve criar uma tarefa a um projeto", async () => {
   expect(outputCreateTask.priority).toBe(taskInput.priority);
   expect(outputCreateTask.dueDate).toBe(taskInput.dueDate);
 });
-  
 
 test("Deve criar um usuário com sucesso", async () => {
   //Given
@@ -133,7 +132,7 @@ test("Deve criar um usuário com sucesso", async () => {
     email: `user${Math.random().toString(36).substring(2, 10)}@example.com`,
     password: "password123",
   };
-  
+
   //When
   const response = await axios.post("http://localhost:3000/users", input);
   const output = response.data;
@@ -143,5 +142,34 @@ test("Deve criar um usuário com sucesso", async () => {
   expect(output.name).toBe(input.name);
   expect(output.email).toBe(input.email);
   expect(output).not.toHaveProperty("password");
-  
-})
+});
+
+test("Deve logar um usuário com sucesso", async () => {
+  //Given
+  const userInput = {
+    name: `user${Math.random().toString(36).substring(2, 10)}`,
+    email: `user${Math.random().toString(36).substring(2, 10)}@example.com`,
+    password: "password123",
+  };
+  const responseCreateUser = await axios.post(
+    "http://localhost:3000/users",
+    userInput
+  );
+  const outputCreateUser = responseCreateUser.data;
+  expect(responseCreateUser.status).toBe(200);
+  expect(outputCreateUser.id).toBeDefined();
+
+  const loginInput = {
+    email: userInput.email,
+    password: userInput.password,
+  };
+
+  //When
+  const responseLogin = await axios.post(
+    "http://localhost:3000/login",
+    loginInput
+  );
+  const outputLogin = responseLogin.data;
+  //Then
+  expect(responseLogin.status).toBe(200);
+});
