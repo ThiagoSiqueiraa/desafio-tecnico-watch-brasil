@@ -1,25 +1,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import TagTask from './TagTask.vue'
-const startDate = ref('2024-06-01')
-const dueDate = ref('2024-06-10')
+import moment from 'moment'
+
 //prop status
 
-const props = defineProps(['priority'])
+const { priority, title, startDate, dueDate } = defineProps([
+  'priority',
+  'title',
+  'startDate',
+  'dueDate',
+])
+
+const completedTasks = ref(3)
+const totalTasks = ref(10)
 </script>
 
 <template>
   <v-card class="mx-auto my-4" width="100%">
     <v-card-item>
       <div class="chips-wrapper">
-        <TagTask :priority="props.priority" />
+        <TagTask :priority="priority" />
       </div>
-      <v-card-title> Card title </v-card-title>
+      <v-card-title>{{ title }}</v-card-title>
     </v-card-item>
 
     <v-card-text>
       <div class="progess-task mt-3">
-        Tarefas completadas: 999 / 230020
+        Tarefas completadas: {{  completedTasks }} /  {{ totalTasks }}
         <v-progress-linear
           :model-value="50"
           color="blue"
@@ -30,8 +38,8 @@ const props = defineProps(['priority'])
       </div>
 
       <div class="date-info-wrapper">
-        <div class="d-flex flex-column"><strong>Data de início</strong> {{ startDate }}</div>
-        <div class="d-flex flex-column"><strong>Data prevista</strong> {{ dueDate }}</div>
+        <div class="d-flex flex-column"><strong>Data de início</strong> {{ moment(startDate).format('DD/MM/YYYY') }}</div>
+        <div class="d-flex flex-column"><strong>Data prevista</strong> {{ moment(dueDate).format('DD/MM/YYYY') }}</div>
       </div>
     </v-card-text>
   </v-card>
