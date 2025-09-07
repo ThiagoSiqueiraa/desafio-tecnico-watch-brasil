@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
 import { ref } from 'vue'
-
-const username = ref<string>('')
+const email = ref<string>('')
 const password = ref<string>('')
 
-function login() {
-  console.log('Username:', username.value)
-  console.log('Password:', password.value)
+async function login() {
+  try {
+    const auth = useAuthStore()
+    await auth.login(email.value, password.value)
+    window.location.href = '/'
+  } catch (e: any) {
+    console.log(e.response.data.message)
+  }
 }
 </script>
 
@@ -21,11 +26,11 @@ function login() {
           <v-card-text>
             <form ref="form" @submit.prevent="login()">
               <v-text-field
-                v-model="username"
-                name="username"
-                label="Usuário"
+                v-model="email"
+                name="email"
+                label="E-mail"
                 type="text"
-                placeholder="Insira o seu usuário."
+                placeholder="Insira o seu e-mail."
                 variant="outlined"
                 required
               ></v-text-field>
