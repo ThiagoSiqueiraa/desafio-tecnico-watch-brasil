@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Sidebar from './components/sidebar/Sidebar.vue'
+
+const routesWithoutSidebar = ['login', 'register']
 </script>
 
 <template>
   <v-app>
-    <template v-if="$route.name !== 'login'">
+    <template v-if="!routesWithoutSidebar.includes($route.name as string)">
       <v-layout>
       <Sidebar />
 
