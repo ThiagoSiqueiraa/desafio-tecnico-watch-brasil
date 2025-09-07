@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import pgPromise from "pg-promise";
 import cors from "cors";
 import { compare, hash } from "bcrypt";
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
@@ -14,6 +14,19 @@ const connection = pgPromise()("postgres://postgres:123456@db:5432/app");
 interface CreateProjectBody {
   name: string;
 }
+
+function authenticateToken(req: Request, res: Response, next: Function) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.sendStatus(401);
+  
+  verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
+    if (err) return res.sendStatus(403);
+    (req as any).user = user;
+    next();
+  });
+}
+
 app.post(
   "/projects",
   async (req: Request<{}, {}, CreateProjectBody>, res: Response) => {
