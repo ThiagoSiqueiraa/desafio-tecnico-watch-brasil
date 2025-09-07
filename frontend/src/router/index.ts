@@ -4,6 +4,7 @@ import RegisterView from '../views/register/Index.vue'
 import DashboardView from '../views/dashboard/Index.vue'
 import ManageTaskView from '../views/tasks/List.vue'
 import TeamView from '../views/team/Index.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      meta: { guestOnly: true },
     },
     {
       path: '/register',
@@ -35,13 +37,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = true
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login') // Redireciona para a página de login se não estiver autenticado
-  } else {
-    next() // Permite a navegação
-  }
+  const auth = useAuthStore()
+  if (to.meta?.guestOnly && auth.isAuthenticated) return next('/')
+  if (to.meta?.requiresAuth && !auth.isAuthenticated) return next('/login')
+  return next()
 })
 
 export default router
