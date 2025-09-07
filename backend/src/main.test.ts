@@ -172,4 +172,7 @@ test("Deve logar um usuário com sucesso", async () => {
   const outputLogin = responseLogin.data;
   //Then
   expect(responseLogin.status).toBe(200);
+  expect(outputLogin.token).toBeDefined();
 });
+
+

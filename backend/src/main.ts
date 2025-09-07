@@ -2,6 +2,9 @@ import express, { Request, Response } from "express";
 import pgPromise from "pg-promise";
 import cors from "cors";
 import { compare, hash } from "bcrypt";
+import { sign } from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -166,7 +169,11 @@ app.post("/login", async (req: Request, res: Response) => {
     //Retorna essa mensagem para não deixar claro se o e-mail ou a senha estão incorretos
   }
 
-  res.json({ id: userData.id, name: userData.name, email: userData.email });
+  //jwt
+  
+  const acessToken = await sign(userData, process.env.JWT_SECRET as string);
+  return res.json({ id: userData.id, name: userData.name, email: userData.email, token: acessToken });
+
 });
 
 
