@@ -74,6 +74,8 @@ async function refreshTasks() {
           :title="task.title"
           :startDate="task.created_at"
           :dueDate="task.due_date"
+          :completed-tasks="task.completedSubtasks"
+          :total-tasks="task.totalSubtasks"
         />
       </div>
       <div class="column-footer">
@@ -97,6 +99,8 @@ async function refreshTasks() {
           :title="task.title"
           :startDate="task.created_at"
           :dueDate="task.due_date"
+          :completed-tasks="task.completedSubtasks"
+          :total-tasks="task.totalSubtasks"
         />
       </div>
       <div class="column-footer">
