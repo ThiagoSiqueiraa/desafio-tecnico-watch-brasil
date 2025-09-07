@@ -1,4 +1,4 @@
-drop schema if exists app;
+drop schema if exists app cascade;
 
 create schema app;
 
@@ -7,14 +7,14 @@ create table app.users (
     name text NOT NULL,
     email text NOT NULL UNIQUE,
     password text NOT NULL,
-    current_project_id BIGINT NULL REFERENCES app.projects(id),
+    current_project_id BIGINT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp NULL
 );
 
 create table app.projects (
-    id BIGSERIAL  primary key,
+    id BIGSERIAL primary key,
     name text NOT NULL,
     owner_user_id BIGINT NOT NULL REFERENCES app.users(id),
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -47,4 +47,17 @@ create table app.tasks_members (
     primary key (task_id, user_id)
 );
 
+create table app.tasks_checklists (
+    id BIGSERIAL primary key,
+    task_id BIGINT NOT NULL REFERENCES app.tasks(id),
+    title text NOT NULL,
+    is_done boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp NULL
+);
 
+alter table app.users
+    add constraint fk_users_current_project
+    foreign key (current_project_id) references app.projects(id)
+    on delete set null;
