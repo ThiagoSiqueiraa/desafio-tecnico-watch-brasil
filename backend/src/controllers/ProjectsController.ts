@@ -47,11 +47,20 @@ export class ProjectsController {
 
   async list(req: Request, res: Response) {
     const { userId } = req.query;
-    const projectRepository = await AppDataSource.getRepository("Project");
-    const projects = await projectRepository.find({
-      where: { ownerUser: { id: Number(userId) } },
-      select: ["id", "name"],
+    const projectMemberRepository = await AppDataSource.getRepository("ProjectMember");
+
+
+    const memberProjectsRelations = await projectMemberRepository.find({
+      where: { user: { id: Number(userId) } },
+      relations: ["project"],
     });
+
+
+    const projects = memberProjectsRelations.map(
+        (relation) => relation.project
+    );
+
+
 
     res.json(projects);
   }
