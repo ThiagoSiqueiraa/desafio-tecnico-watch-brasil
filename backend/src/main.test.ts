@@ -2,25 +2,49 @@ import axios from "axios";
 
 test("Deve criar um projeto com sucesso", async () => {
   //Given
+  // Cria um usuário
+  const userInput = {
+    name: `user${Math.random().toString(36).substring(2, 10)}`,
+    email: `user${Math.random().toString(36).substring(2, 10)}@example.com`,
+    password: "password123",
+  };
+  const responseCreateUser = await axios.post(
+    "http://localhost:3000/users",
+    userInput
+  );
+  const userId = responseCreateUser.data.id;
+
+  // Autentica o usuário
+  const loginInput = {
+    email: userInput.email,
+    password: userInput.password,
+  };
+  const responseLogin = await axios.post(
+    "http://localhost:3000/login",
+    loginInput
+  );
+  const token = responseLogin.data.token;
+
+  // Cria o projeto autenticado
   const input = {
     name: `Projeto-${Math.random().toString(36).substring(2, 10)}`,
+    userId: userId,
   };
 
-  //When
   const responseCreateProject = await axios.post(
     "http://localhost:3000/projects",
-    input
+    input,
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   const outputCreateProject = responseCreateProject.data;
-  //Then
   expect(responseCreateProject.status).toBe(200);
   expect(outputCreateProject.id).toBeDefined();
 
-  console.log(outputCreateProject);
-  const responseGetAccount = await axios.get(
-    `http://localhost:3000/projects/${outputCreateProject.id}`
+  const responseGetProject = await axios.get(
+    `http://localhost:3000/projects/${outputCreateProject.id}`,
+    { headers: { Authorization: `Bearer ${token}` } }
   );
-  const outputGetProject = responseGetAccount.data;
+  const outputGetProject = responseGetProject.data;
   expect(outputGetProject.name).toBe(input.name);
 });
 
