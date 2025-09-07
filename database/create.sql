@@ -23,9 +23,9 @@ create table app.projects (
 );
 
 create table app.projects_members (
+    id BIGSERIAL primary key,
     project_id BIGINT NOT NULL REFERENCES app.projects(id),
-    user_id BIGINT NOT NULL REFERENCES app.users(id),
-    primary key (project_id, user_id)
+    user_id BIGINT NOT NULL REFERENCES app.users(id)
 );
 
 create table app.tasks (
