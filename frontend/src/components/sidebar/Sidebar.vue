@@ -25,7 +25,8 @@ function handleClose() {
 async function handleSubmit(event: { title: string}) {
   // Lógica para salvar o novo projeto
   console.log('Salvar novo projeto:', event)
-  await projectGateway.create('32131')
+  const project = await projectGateway.create(event.title)
+  projects.value.push(project)
   showAddNewProject.value = false
 }
 
