@@ -1,8 +1,8 @@
 // src/stores/auth.ts
 import { defineStore } from 'pinia'
 import { ref, computed, inject, watch } from 'vue'
-import type AuthGateway from '@/gateway/AuthGateway'
 import type { UserAuthenticated } from '@/gateway/AuthGateway'
+import AuthGateway from '@/gateway/AuthGateway';
 
 type User = { id: number; name: string; email: string; role?: string }
 
@@ -25,10 +25,8 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = ''
     try {
-      // espere algo como { token, user }
-      const authGateway = inject<AuthGateway>('authGateway')
-      if (authGateway) throw new Error('authGateway não provido (provide)')
-      const data = (await authGateway!.login({ email, password })) as UserAuthenticated
+      const authGateway = new AuthGateway();
+      const data = (await authGateway.login({ email, password })) as UserAuthenticated
       token.value = data.token
       user.value = {
         email: data.email,
@@ -48,13 +46,6 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
-  async function refresh() {
-    // se seu backend expõe /auth/refresh
-    // const data = await authGateway.refresh()
-    // token.value = data.token
-  }
-
-  // persiste automaticamente
   watch(token, (t) => (t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY)))
   watch(
     user,
@@ -63,5 +54,5 @@ export const useAuthStore = defineStore('auth', () => {
     { deep: true },
   )
 
-  return { token, user, loading, error, isAuthenticated, role, login, logout, refresh }
+  return { token, user, loading, error, isAuthenticated, role, login, logout }
 })
