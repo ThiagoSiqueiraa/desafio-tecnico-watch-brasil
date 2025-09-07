@@ -208,9 +208,26 @@ app.get("/me", authenticateToken, async (req: Request, res: Response) => {
   if (!user) {
     return res.status(404).json({ message: "Usuário não encontrado" });
   }
-  
+
   res.json(user);
 });
+
+
+app.get("/tasks/:projectId", async (req: Request, res: Response) => {
+
+  const { projectId } = req.params;
+  
+  if(!projectId){
+    return res.status(400).json({ message: "ID do projeto é obrigatório" });
+  }
+
+  const tasksRepository = AppDataSource.getRepository("Task");
+  const tasks = await tasksRepository.find({
+    where: { project: { id: Number(projectId) } },
+  });
+
+  res.json(tasks);
+})
 
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
