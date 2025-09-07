@@ -254,7 +254,7 @@ app.get("/tasks/:projectId", async (req: Request, res: Response) => {
   const tasksRepository = AppDataSource.getRepository("Task");
   const tasks = await tasksRepository.find({
     where: { project: { id: Number(projectId) } },
-    relations: ["checklists"],
+    relations: ["checklist"],
     order: { updatedAt: "ASC" },
   });
 
