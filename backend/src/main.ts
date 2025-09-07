@@ -4,6 +4,8 @@ import cors from "cors";
 import { compare, hash } from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import dotenv from "dotenv";
+import { AppDataSource } from "./data-source";
+import { User } from "./entities/User";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -17,6 +19,7 @@ interface CreateProjectBody {
 
 function authenticateToken(req: Request, res: Response, next: Function) {
   const authHeader = req.headers["authorization"];
+  console.log(authHeader);
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
 
@@ -193,6 +196,20 @@ app.post("/login", async (req: Request, res: Response) => {
     email: userData.email,
     token: acessToken,
   });
+});
+
+app.get("/me", authenticateToken, async (req: Request, res: Response) => {
+  const userId = (req as any).user.id;
+  const userRepository = AppDataSource.getRepository(User)
+  const user = await userRepository.findOne({
+    where: { id: userId },
+    relations: ["currentProject"]
+  });
+  if (!user) {
+    return res.status(404).json({ message: "Usuário não encontrado" });
+  }
+  
+  res.json(user);
 });
 
 console.log("Server running on http://localhost:3000");
