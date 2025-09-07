@@ -5,15 +5,18 @@ import moment from 'moment'
 
 //prop status
 
-const { priority, title, startDate, dueDate } = defineProps([
+const { priority, title, startDate, dueDate, completedTasks, totalTasks } = defineProps([
   'priority',
   'title',
   'startDate',
   'dueDate',
+  'completedTasks',
+  'totalTasks',
 ])
 
-const completedTasks = ref(3)
-const totalTasks = ref(10)
+function progress(){
+  return (completedTasks / totalTasks) * 100
+}
 </script>
 
 <template>
@@ -27,9 +30,9 @@ const totalTasks = ref(10)
 
     <v-card-text>
       <div class="progess-task mt-3">
-        Tarefas completadas: {{  completedTasks }} /  {{ totalTasks }}
+        Tarefas completadas: {{ completedTasks }} / {{ totalTasks }}
         <v-progress-linear
-          :model-value="50"
+          :model-value="progress()"
           color="blue"
           height="9"
           aria-label="Progresso da tarefa"
@@ -38,8 +41,12 @@ const totalTasks = ref(10)
       </div>
 
       <div class="date-info-wrapper">
-        <div class="d-flex flex-column"><strong>Data de início</strong> {{ moment(startDate).format('DD/MM/YYYY') }}</div>
-        <div class="d-flex flex-column"><strong>Data prevista</strong> {{ moment(dueDate).format('DD/MM/YYYY') }}</div>
+        <div class="d-flex flex-column">
+          <strong>Data de início</strong> {{ moment(startDate).format('DD/MM/YYYY') }}
+        </div>
+        <div class="d-flex flex-column">
+          <strong>Data prevista</strong> {{ moment(dueDate).format('DD/MM/YYYY') }}
+        </div>
       </div>
     </v-card-text>
   </v-card>
