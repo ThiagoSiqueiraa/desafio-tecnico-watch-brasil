@@ -4,14 +4,29 @@ import AddNewProjectModal from '../projects/AddNewProjectModal.vue'
 import { inject, onMounted, ref } from 'vue'
 import ProjectGateway, { type Project } from '@/gateway/ProjectGateway'
 import { useAuthStore } from '@/stores/auth'
+import Swal from 'sweetalert2'
 const projectGateway = inject('projectGateway') as ProjectGateway
 
 const showAddNewProject = ref(false)
 const user = useAuthStore().user
 const menu = menuItens
 const projects = ref<Project[]>([])
-function changeProject() {
-  alert('Trocar de projeto')
+async function changeProject(id: number) {
+  try {
+    await projectGateway.changeActualProject(id, useAuthStore().token)
+    user!.currentProject = projects.value.find((p) => p.id === id) || null
+  } catch (e: any) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao alterar projeto',
+      text: e?.response?.data?.message || 'Tente novamente mais tarde',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'my-custom-button-text',
+      },
+    })
+  }
 }
 
 function addProject() {
@@ -74,7 +89,7 @@ onMounted(async () => {
             <v-list-item
               v-for="(project, idx) in getPossibleProjects()"
               :key="idx"
-              @click="changeProject()"
+              @click="changeProject(project.id)"
             >
               <v-list-item-title>{{ project.name }}</v-list-item-title>
             </v-list-item>
