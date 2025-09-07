@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
 import routes from "./routes";
+import { verifyToken } from "./middleware/checkAuth";
 
 dotenv.config();
 const app = express();
@@ -20,22 +21,9 @@ interface CreateProjectBody {
   name: string;
 }
 
-function authenticateToken(req: Request, res: Response, next: Function) {
-  const authHeader = req.headers["authorization"];
-  console.log(authHeader);
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
-
-  verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
-    (req as any).user = user;
-    next();
-  });
-}
-
 app.post(
   "/projects",
-  authenticateToken,
+  verifyToken,
   async (req: Request<{}, {}, CreateProjectBody>, res: Response) => {
     const { name } = req.body;
     if (!name) {
@@ -142,7 +130,7 @@ app.post("/login", async (req: Request, res: Response) => {
   });
 });
 
-app.get("/me", authenticateToken, async (req: Request, res: Response) => {
+app.get("/me", verifyToken, async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
   const userRepository = AppDataSource.getRepository(User);
   const user = await userRepository.findOne({
