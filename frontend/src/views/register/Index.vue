@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
     :timeout="snackbarTimeout"
   >
     {{ snackbarMsg }}
-    <template #actions>
+    <template #actions v-if="snackbarColor === 'success'">
       <v-btn variant="text" @click="goNow">Ir agora</v-btn>
     </template>
   </v-snackbar>
