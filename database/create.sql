@@ -7,6 +7,7 @@ create table app.users (
     name text NOT NULL,
     email text NOT NULL UNIQUE,
     password text NOT NULL,
+    current_project_id BIGINT NULL REFERENCES app.projects(id),
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp NULL
