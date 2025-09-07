@@ -26,6 +26,7 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
 async function refreshTasks() {
   tasks.value = []
   tasks.value = await tasksGateway.list(authStore.user?.currentProject?.id!, authStore.token)
+  showDialogCreateTask.value = false
 }
 </script>
 
@@ -34,6 +35,7 @@ async function refreshTasks() {
     :model-value="showDialogCreateTask"
     v-if="showDialogCreateTask"
     :status="status"
+    @close="showDialogCreateTask = false"
     @on-success="refreshTasks"
   />
   <div class="wrapper-tasks">

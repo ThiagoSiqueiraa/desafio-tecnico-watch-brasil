@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
@@ -86,6 +86,10 @@ function handleConfirm(membersReceived: any) {
 function handleCancel() {
   showDialogAddMember.value = false
 }
+
+watch(showDialog, (val) => {
+  if (!val) emit('close')
+})
 </script>
 
 <template>
