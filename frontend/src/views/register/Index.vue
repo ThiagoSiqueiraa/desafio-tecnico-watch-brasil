@@ -1,22 +1,43 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type UsersGateway from '@/gateway/UsersGateway'
+import { inject, ref } from 'vue'
 
 const name = ref<string>('')
 const password = ref<string>('')
 const email = ref<string>('')
+const usersGateway = inject('usersGateway') as UsersGateway
+const snackbar = ref(false)
+const snackbarMsg = ref('')
+const snackbarColor = ref('')
 
+async function signup() {
+  try {
+    const user = await usersGateway.create({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    })
+    snackbarMsg.value = 'Usuário cadastrado com sucesso!'
+    snackbarColor.value = 'success'
+  } catch (error: any) {
+    snackbarMsg.value = error.response?.data?.message || 'Erro no cadastro'
+    snackbarColor.value = 'error'
+  } finally {
+    snackbar.value = true
 
-function signup() {
-  console.log('Cadastrando usuário com os dados:', {
-    name: name.value,
-    email: email.value,
-    password: password.value,
-  })
+    name.value = ''
+    email.value = ''
+    password.value = ''
+  }
+
   // Aqui você pode adicionar a lógica para enviar os dados para o backend
 }
 </script>
 
 <template>
+  <v-snackbar location="top right" v-model="snackbar" :color="snackbarColor" timeout="4000">
+    {{ snackbarMsg }}
+  </v-snackbar>
   <v-container fluid class="d-flex align-center justify-center" style="height: 100vh">
     <v-row class="justify-center">
       <v-col cols="12" sm="8" md="4">
@@ -54,8 +75,9 @@ function signup() {
                 required
               ></v-text-field>
 
-              <v-btn type="submit" class="w-100" color="primary" value="register">Cadastre-se</v-btn>
-
+              <v-btn type="submit" class="w-100" color="primary" value="register"
+                >Cadastre-se</v-btn
+              >
             </form>
           </v-card-text>
         </v-card>
