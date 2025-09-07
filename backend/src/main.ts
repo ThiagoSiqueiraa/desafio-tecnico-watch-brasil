@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import pgPromise from "pg-promise";
 import cors from "cors";
+import { hash } from "bcrypt";
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -131,9 +132,10 @@ app.post("/users", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Senha é obrigatória" });
   }
   
+  const passwordHash = await hash(password, 10);
   const id = await connection.query(
     "INSERT INTO app.users (name, email, password) VALUES ($1, $2, $3) RETURNING id",
-    [name, email, password]
+    [name, email, passwordHash]
   );
 
   res.json({ id: id[0].id, name, email });
