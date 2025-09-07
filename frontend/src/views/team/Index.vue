@@ -1,61 +1,109 @@
-<template>
-  <div>
-    <!-- cria uma lista de card que vai ser os times -->
-    <header class="d-flex justify-end mb-4 mt-4 ml-4 mr-4">
-      <v-btn>Criar time</v-btn>
-    </header>
+<script setup lang="ts">
+import AddNewMemberInProject from '@/components/projects/AddNewMemberInProject.vue'
+import type ProjectGateway from '@/gateway/ProjectGateway'
+import { useAuthStore } from '@/stores/auth'
+import Swal from 'sweetalert2'
+import { ref, computed, onMounted, inject } from 'vue'
 
+const projectGateway = inject('projectGateway') as ProjectGateway
+
+const members: any = ref([])
+
+const headers = [
+  { text: 'Nome', value: 'name' },
+  { text: 'Email', value: 'email' },
+
+  { text: 'Ações', value: 'actions', sortable: false },
+]
+
+function removeMember(member: any) {
+  console.log(member)
+  Swal.fire({
+    title: 'Tem certeza?',
+    text: 'Deseja realmente remover este membro?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sim, remover',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    customClass: {
+      confirmButton: 'my-custom-button-text',
+      cancelButton: 'my-custom-button-text',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+    }
+  })
+}
+
+const showAddNewMember = ref(false)
+function handleClose() {
+  showAddNewMember.value = false
+}
+async function handleSubmit(event: { email: string }) {
+  try {
+    await projectGateway.addMember(
+      useAuthStore().user!.currentProject!.id,
+      event.email,
+      useAuthStore().token,
+    )
+    members.value = await projectGateway.listMembers(
+      useAuthStore().user!.currentProject!.id,
+      useAuthStore().token,
+    )
+    showAddNewMember.value = false
+  } catch (e: any) {
+    console.log(e)
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao adicionar membro',
+      text: e?.response?.data?.message || 'Tente novamente mais tarde',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+          confirmButton: 'my-custom-button-text',
+      },
+    })
+  }
+  console.log('Salvar novo membro:', event)
+}
+function openAddMemberModal() {
+  showAddNewMember.value = true
+}
+
+onMounted(async () => {
+  members.value = await projectGateway.listMembers(
+    useAuthStore().user!.currentProject!.id,
+    useAuthStore().token,
+  )
+})
+</script>
+
+<template>
+  <AddNewMemberInProject
+    :modelValue="showAddNewMember"
+    @close="handleClose()"
+    @save="handleSubmit($event)"
+  />
+  <div class="pa-4">
+    <header class="d-flex align-center mb-4">
+      <h1 class="mb-4">Gerenciamento de Membros</h1>
+      <!-- botão para adicionar membro -->
+      <v-btn color="primary" variant="outlined" class="mb-4 ml-auto" @click="openAddMemberModal"
+        >Adicionar Membro</v-btn
+      >
+    </header>
     <v-row>
-      <v-col cols="4" v-for="team in teams" :key="team.id" class="mb-4">
-        <v-card outlined>
-          <v-card-title>
-            {{ team.name }}
-          </v-card-title>
-          <v-card-text>
-            <v-list>
-              <v-list-item v-for="member in team.members" :key="member.id">
-                <v-list-item-content>
-                  <v-list-item-title>{{ member.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ member.email }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
+      <v-col cols="12">
+        <v-data-table :headers="headers" :items="members" class="elevation-1">
+          <template #item.actions="{ item }">
+            <v-icon v-tooltip="'Remover membro'" @click="removeMember(item)">mdi-delete</v-icon>
+          </template>
+        </v-data-table>
       </v-col>
     </v-row>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
-const teams = ref([
-  {
-    id: 1,
-    name: 'Time A',
-    members: [
-      { id: 1, name: 'Alice', email: 'alice@example.com' },
-      { id: 2, name: 'Bob', email: 'bob@example.com' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Time B',
-    members: [
-      { id: 3, name: 'Charlie', email: 'charlie@example.com' },
-      { id: 4, name: 'David', email: 'david@example.com' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Time B',
-    members: [
-      { id: 41, name: 'Charlie', email: 'charlie@example.com' },
-      { id: 1231, name: 'David', email: 'david@example.com' },
-    ],
-  },
-])
-</script>
 
 <style scoped></style>
