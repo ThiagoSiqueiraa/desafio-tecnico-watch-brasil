@@ -15,7 +15,6 @@ const emit = defineEmits<{ (e: 'click'): void }>()
 
 <template>
   <v-card
-    :elevation="elevation ?? 5"
     :rounded="rounded ?? 'xl'"
     class="mx-auto my-4"
     max-width="420"
