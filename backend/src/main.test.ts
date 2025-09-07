@@ -199,4 +199,47 @@ test("Deve logar um usuário com sucesso", async () => {
   expect(outputLogin.token).toBeDefined();
 });
 
+test("Deve retornar as informações do usuário autenticado", async () => {
+  //Given
+  const userInput = {
+    name: `user${Math.random().toString(36).substring(2, 10)}`,
+    email: `user${Math.random().toString(36).substring(2, 10)}@example.com`,
+    password: "password123",
+  };
+  const responseCreateUser = await axios.post(
+    "http://localhost:3000/users",
+    userInput
+  );
+  const outputCreateUser = responseCreateUser.data;
+  expect(responseCreateUser.status).toBe(200);
+  expect(outputCreateUser.id).toBeDefined();
 
+  const loginInput = {
+    email: userInput.email,
+    password: userInput.password, 
+  };
+  
+  const responseLogin = await axios.post(
+
+    "http://localhost:3000/login",
+    loginInput
+  );
+
+  const outputLogin = responseLogin.data;
+  expect(responseLogin.status).toBe(200);
+  expect(outputLogin.token).toBeDefined();
+  const token = outputLogin.token;
+  
+  //When
+  const response = await axios.get("http://localhost:3000/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const output = response.data;
+  //Then
+  expect(response.status).toBe(200);
+  expect(output.id).toBe(outputCreateUser.id);
+  expect(output.name).toBe(outputCreateUser.name);
+  expect(output.email).toBe(outputCreateUser.email);
+  expect(output).toHaveProperty("currentProject");
+  expect(output).not.toHaveProperty("password");
+});
