@@ -15,7 +15,7 @@ const priority = ref('')
 const dueDate = ref<Date | null>(null)
 const newChecklistItem = ref('')
 const description = ref('')
-const tasks = ref<{ title: string }[]>([])
+const tasks = ref<{ title: string; completed?: boolean }[]>([])
 const members = ref<Member[]>([])
 const emit = defineEmits(['close', 'save', 'onSuccess'])
 const isEditing = ref<boolean>(false)
@@ -86,9 +86,6 @@ function addChecklistItem() {
 function removeItem(index: number) {
   tasks.value.splice(index, 1)
 }
-
-
-
 
 watch(showDialog, (val) => {
   if (!val) emit('close')
@@ -167,7 +164,6 @@ onMounted(async () => {
                     locale="pt-BR"
                     :min="new Date()"
                   />
-                  
                 </div>
               </v-col>
               <v-col cols="12">
@@ -193,9 +189,18 @@ onMounted(async () => {
                     rounded
                   >
                     <v-list-item-content>
-                      <v-list-item-title class="d-flex align-center justify-space-between">
+                      <v-list-item-title class="d-flex align-center">
+                        <span v-if="isEditing">
+                          <v-checkbox
+                            v-model="task.completed"
+                            density="compact"
+                            hide-details
+                            :label="''"
+                            class="mr-2"
+                          />
+                        </span>
                         <span>{{ index + 1 }} {{ task.title }} </span>
-                        <v-icon @click="() => removeItem(index)" class="text-red-lighten-1"
+                        <v-icon @click="() => removeItem(index)" class="text-red-lighten-1 ml-auto"
                           >mdi-delete</v-icon
                         >
                       </v-list-item-title>
@@ -213,6 +218,11 @@ onMounted(async () => {
                     <v-icon @click="addChecklistItem">mdi-plus</v-icon>
                   </template>
                 </v-text-field>
+
+                <small
+                  >Para alterar a situação dos itens da checklist, é necessário salvar a
+                  tarefa.</small
+                >
               </v-col>
             </v-row>
             <div class="d-flex justify-end">
