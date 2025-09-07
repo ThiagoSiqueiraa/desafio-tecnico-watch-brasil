@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 
 export interface Project {
@@ -18,8 +19,16 @@ export default class ProjectGateway {
     return response.data
   }
 
-  async create(title: string): Promise<Project> {
-    const response = await axios.post<Project>(`${this.baseUrl}/projects`, { name: title })
+  async create(title: string, token: string): Promise<Project> {
+    const response = await axios.post<Project>(
+      `${this.baseUrl}/projects`,
+      { name: title },
+      {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      }
+    )
     return response.data
   }
 

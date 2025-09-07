@@ -2,8 +2,9 @@
 import menuItens from './menuItens'
 import AddNewProjectModal from '../projects/AddNewProjectModal.vue'
 import { inject, onMounted, ref } from 'vue'
-import ProjectGateway, { type Project }  from '@/gateway/ProjectGateway'
-  const projectGateway = inject("projectGateway") as ProjectGateway;
+import ProjectGateway, { type Project } from '@/gateway/ProjectGateway'
+import { useAuthStore } from '@/stores/auth'
+const projectGateway = inject('projectGateway') as ProjectGateway
 
 const showAddNewProject = ref(false)
 
@@ -14,7 +15,6 @@ function changeProject() {
 }
 
 function addProject() {
-
   showAddNewProject.value = true
 }
 
@@ -22,10 +22,10 @@ function handleClose() {
   showAddNewProject.value = false
 }
 
-async function handleSubmit(event: { title: string}) {
+async function handleSubmit(event: { title: string }) {
   // Lógica para salvar o novo projeto
   console.log('Salvar novo projeto:', event)
-  const project = await projectGateway.create(event.title)
+  const project = await projectGateway.create(event.title, useAuthStore().token)
   projects.value.push(project)
   showAddNewProject.value = false
 }
@@ -37,14 +37,18 @@ async function getPossibleProjects() {
 }
 
 onMounted(async () => {
-    const response = await projectGateway.list()
-    console.log(projects)
-    projects.value = response
+  const response = await projectGateway.list()
+  console.log(projects)
+  projects.value = response
 })
 </script>
 
 <template>
-  <AddNewProjectModal :modelValue="showAddNewProject" @close="handleClose()"  @save="handleSubmit($event)"/>
+  <AddNewProjectModal
+    :modelValue="showAddNewProject"
+    @close="handleClose()"
+    @save="handleSubmit($event)"
+  />
   <v-navigation-drawer app permanent width="280">
     <v-list>
       <v-list-item
@@ -65,11 +69,7 @@ onMounted(async () => {
             </v-btn>
           </template>
           <v-list>
-            <v-list-item
-              v-for="(project, idx) in projects"
-              :key="idx"
-              @click="changeProject()"
-            >
+            <v-list-item v-for="(project, idx) in projects" :key="idx" @click="changeProject()">
               <v-list-item-title>{{ project.name }}</v-list-item-title>
             </v-list-item>
             <v-divider />
