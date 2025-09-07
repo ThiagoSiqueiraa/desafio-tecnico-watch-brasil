@@ -31,8 +31,8 @@ async function handleSubmit(event: { title: string }) {
 }
 
 
-async function getPossibleProjects() {
-  return projects.value
+ function getPossibleProjects() {
+  return projects.value.filter((p) => p.id !== user?.currentProject?.id) as Project[]
 }
 
 onMounted(async () => {
@@ -72,7 +72,7 @@ onMounted(async () => {
             </v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="(project, idx) in projects" :key="idx" @click="changeProject()">
+            <v-list-item v-for="(project, idx) in getPossibleProjects()" :key="idx" @click="changeProject()">
               <v-list-item-title>{{ project.name }}</v-list-item-title>
             </v-list-item>
             <v-divider />
