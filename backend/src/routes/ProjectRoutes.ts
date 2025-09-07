@@ -9,5 +9,6 @@ router.get("/:id", verifyToken, projectController.getById);
 router.get("/", verifyToken, projectController.list);
 router.delete("/:id", verifyToken, projectController.delete);
 router.post("/addMember/:projectId", verifyToken, projectController.addMember);
+router.get("/members/:projectId", verifyToken, projectController.listMembers);
 export default router;
 

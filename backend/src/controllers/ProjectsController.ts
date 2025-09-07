@@ -109,4 +109,26 @@ export class ProjectsController {
 
     res.json({ message: "Membro adicionado com sucesso", member: user });
   }
+
+  async listMembers(req: Request, res: Response) {
+    const { projectId } = req.params;
+    
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.findOne({
+        where: { id: Number(projectId) },
+        relations: ["members", "members.user"],
+    });
+    
+    if (!project) {
+        return res.status(404).json({ message: "Projeto não encontrado" });
+    }
+    
+    const members = project.members.map((member: any) => ({
+        id: member.user.id,
+        name: member.user.name,
+        email: member.user.email,
+    }));
+
+    res.json(members);
+    }
 }
