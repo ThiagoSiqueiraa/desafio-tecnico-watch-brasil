@@ -98,6 +98,7 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
 }
 
 .column {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -109,6 +110,7 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
 
 .column-header {
   position: sticky;
+  width: 100%;
   top: 0;
   z-index: 1;
   padding: 12px 12px 8px;
@@ -125,16 +127,18 @@ const completed = computed(() => tasks.value.filter((t: any) => t.status === 'co
   min-height: 0;
   overflow-y: auto;
   padding: 10px;
+  height: 85%;
   background-color: #fbfbfb;
 }
 
 .column-footer {
-  position: sticky;
+  position: absolute;
   bottom: 0;
   background: rgba(96, 96, 96, 0.95);
   padding: 6px;
   border-top: 1px solid #223322;
   color: white;
+  width: 100%;
 }
 
 .column :deep(.v-card) {
