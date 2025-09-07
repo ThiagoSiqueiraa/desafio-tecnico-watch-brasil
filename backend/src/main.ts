@@ -80,14 +80,10 @@ app.delete("/projects/:id", async (req: Request, res: Response) => {
   res.status(204).send();
 });
 
-app.post("/tasks", async (req: Request, res: Response) => {
-  const { title, projectId, status, priority, dueDate } = req.body;
+app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
+  const { title, status, priority, dueDate } = req.body;
   if (!title) {
-    return res.status(400).json({ message: "Título é obri" });
-  }
-
-  if (!projectId) {
-    return res.status(400).json({ message: "ID do projeto é obrigatório" });
+    return res.status(400).json({ message: "Título é obrigatório" });
   }
 
   if (!status) {
@@ -115,28 +111,39 @@ app.post("/tasks", async (req: Request, res: Response) => {
       .json({ message: "Data de vencimento é obrigatória" });
   }
 
-  const project = await connection.query(
-    "SELECT id FROM app.projects WHERE id = $1",
-    [projectId]
-  );
-
-  if (project.length === 0) {
-    return res.status(404).json({ message: "Projeto não encontrado" });
+  //checa o formato da data
+  if (isNaN(Date.parse(dueDate))) {
+    return res
+      .status(400)
+      .json({ message: "Data de vencimento em formato inválido" });
   }
 
-  const id = await connection.query(
-    "INSERT INTO app.tasks (title, project_id, status, priority, due_date) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-    [title, projectId, status, priorityDictonary[priority], dueDate]
-  );
-
-  res.json({
-    id: id[0].id,
-    title,
-    projectId,
-    status,
-    priority: priority,
-    dueDate,
+  const actualProjectUser = await AppDataSource.getRepository("User").find({
+    where: { id: (req as any).user.id },
+    relations: ["currentProject"],
   });
+
+  if (actualProjectUser.length === 0) {
+    return res.status(404).json({ message: "Usuário não encontrado" });
+  }
+
+  if (!actualProjectUser[0].currentProject) {
+    return res.status(400).json({ message: "Usuário não está em um projeto" });
+  }
+
+  const projectId = actualProjectUser[0].currentProject.id;
+
+
+  const tasksRepository = AppDataSource.getRepository("Task");
+  const newTask = tasksRepository.create({
+    title,
+    status,
+    priority: priorityDictonary[priority],
+    dueDate: dueDate,
+    project: { id: projectId },
+  });
+  await tasksRepository.save(newTask);
+  res.json(newTask);
 });
 
 app.post("/users", async (req: Request, res: Response) => {
@@ -200,10 +207,10 @@ app.post("/login", async (req: Request, res: Response) => {
 
 app.get("/me", authenticateToken, async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
-  const userRepository = AppDataSource.getRepository(User)
+  const userRepository = AppDataSource.getRepository(User);
   const user = await userRepository.findOne({
     where: { id: userId },
-    relations: ["currentProject"]
+    relations: ["currentProject"],
   });
   if (!user) {
     return res.status(404).json({ message: "Usuário não encontrado" });
@@ -212,12 +219,10 @@ app.get("/me", authenticateToken, async (req: Request, res: Response) => {
   res.json(user);
 });
 
-
 app.get("/tasks/:projectId", async (req: Request, res: Response) => {
-
   const { projectId } = req.params;
-  
-  if(!projectId){
+
+  if (!projectId) {
     return res.status(400).json({ message: "ID do projeto é obrigatório" });
   }
 
@@ -227,7 +232,7 @@ app.get("/tasks/:projectId", async (req: Request, res: Response) => {
   });
 
   res.json(tasks);
-})
+});
 
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
