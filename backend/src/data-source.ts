@@ -14,6 +14,8 @@ export const AppDataSource = new DataSource({
   database: "app",
   synchronize: false,
   entities: [User, Project, Task, TaskChecklist],
+  logging: true,
+  logger: "advanced-console",
 });
 
 AppDataSource.initialize()

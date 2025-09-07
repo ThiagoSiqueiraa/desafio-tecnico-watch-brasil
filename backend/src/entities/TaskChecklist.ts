@@ -18,7 +18,7 @@ export class TaskChecklist {
   @Column({ type: "bigint", name: "task_id" })
   taskId!: string;
 
-  @ManyToOne(() => Task, (task) => task.checklists, { onDelete: "CASCADE" })
+  @ManyToOne(() => Task, (task) => task.checklist, { onDelete: "CASCADE" })
   @JoinColumn({ name: "task_id" })
   task!: Task;
 

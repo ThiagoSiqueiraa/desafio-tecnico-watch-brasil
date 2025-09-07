@@ -81,7 +81,7 @@ app.delete("/projects/:id", async (req: Request, res: Response) => {
 });
 
 app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
-  const { title, status, priority, dueDate, description } = req.body;
+  const { title, status, priority, dueDate, description, checklist } = req.body;
   if (!title) {
     return res.status(400).json({ message: "Título é obrigatório" });
   }
@@ -118,6 +118,12 @@ app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
       .json({ message: "Data de vencimento em formato inválido" });
   }
 
+  if (!checklist || checklist.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Checklist é obrigatória e deve ter ao menos um item" });
+  }
+
   const actualProjectUser = await AppDataSource.getRepository("User").find({
     where: { id: (req as any).user.id },
     relations: ["currentProject"],
@@ -134,7 +140,9 @@ app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
   const projectId = actualProjectUser[0].currentProject.id;
 
   const tasksRepository = AppDataSource.getRepository("Task");
-  const newTask = tasksRepository.create({
+  // Cria as entidades de checklist associadas à tarefa
+
+  const newTask = await tasksRepository.create({
     title,
     status,
     priority: priorityDictonary[priority],
@@ -142,8 +150,25 @@ app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
     project: { id: projectId },
     description,
   });
-  await tasksRepository.save(newTask);
-  res.json(newTask);
+
+  const savedTask = await tasksRepository.save(newTask);
+
+  const checklistEntities = checklist.map((it: any, idx: number) =>
+    AppDataSource.getRepository("TaskChecklist").create({
+      title: it.title,
+      done: !!it.done,
+      order: it.order ?? idx,
+      task: { id: savedTask.id }, // associa por FK
+    })
+  );
+
+  await AppDataSource.getRepository("TaskChecklist").save(checklistEntities);
+
+  res.json({
+    ...newTask,
+    completedSubtasks: 0,
+    totalSubtasks: checklist.length,
+  });
 });
 
 app.post("/users", async (req: Request, res: Response) => {

@@ -37,7 +37,7 @@ export class Task {
   dueDate?: Date | null;
 
   @OneToMany(() => TaskChecklist, (checklist) => checklist.task)
-  checklists!: TaskChecklist[];
+  checklist!: TaskChecklist[];
 
   @CreateDateColumn({ type: "timestamp", name: "created_at" })
   createdAt!: Date;
