@@ -2,6 +2,7 @@
 import { inject, onMounted, ref, watch } from 'vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
+import Swal from 'sweetalert2'
 
 type Member = {
   name: string
@@ -50,20 +51,37 @@ const submit = async () => {
     }
     console.log('Dados da tarefa:', taskData)
 
-    console.log('isEditing:', isEditing.value, 'taskId:', taskId)
     if (isEditing && taskId) {
       await tasksGateway.update(taskId, taskData, useAuthStore().token)
-      emit('onSuccess')
-      showDialog.value = false
-      return
+      Swal.fire({
+        icon: 'success',
+        title: 'Tarefa atualizada com sucesso!',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'my-custom-button-text',
+        },
+      })
     } else {
       await tasksGateway.create({ ...taskData, status: statusState.value }, useAuthStore().token)
     }
 
     showDialog.value = false
     emit('onSuccess')
-  } catch (e) {
+  } catch (e: any) {
+    showDialog.value = false
     console.log(e)
+    const messageError = e.response.data.message || 'Erro ao salvar a tarefa'
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao salvar a tarefa',
+      text: messageError,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'my-custom-button-text',
+      },
+    })
   }
 }
 
