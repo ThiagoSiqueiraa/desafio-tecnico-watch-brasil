@@ -81,7 +81,7 @@ app.delete("/projects/:id", async (req: Request, res: Response) => {
 });
 
 app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
-  const { title, status, priority, dueDate } = req.body;
+  const { title, status, priority, dueDate, description } = req.body;
   if (!title) {
     return res.status(400).json({ message: "Título é obrigatório" });
   }
@@ -133,7 +133,6 @@ app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
 
   const projectId = actualProjectUser[0].currentProject.id;
 
-
   const tasksRepository = AppDataSource.getRepository("Task");
   const newTask = tasksRepository.create({
     title,
@@ -141,6 +140,7 @@ app.post("/tasks", authenticateToken, async (req: Request, res: Response) => {
     priority: priorityDictonary[priority],
     dueDate: dueDate,
     project: { id: projectId },
+    description,
   });
   await tasksRepository.save(newTask);
   res.json(newTask);
@@ -229,6 +229,8 @@ app.get("/tasks/:projectId", async (req: Request, res: Response) => {
   const tasksRepository = AppDataSource.getRepository("Task");
   const tasks = await tasksRepository.find({
     where: { project: { id: Number(projectId) } },
+    relations: ["checklists"],
+    order: { updatedAt: "ASC" },
   });
 
   res.json(tasks);

@@ -7,8 +7,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from "typeorm";
 import { Project } from "./Project";
+import { TaskChecklist } from "./TaskChecklist";
 
 @Entity({ schema: "app", name: "tasks" })
 export class Task {
@@ -31,15 +33,18 @@ export class Task {
   @Column("int")
   priority!: number;
 
-  @Column("timestamp", { nullable: true })
-  due_date?: Date | null;
+  @Column("timestamp", { nullable: true, name: "due_date" })
+  dueDate?: Date | null;
+
+  @OneToMany(() => TaskChecklist, (checklist) => checklist.task)
+  checklists!: TaskChecklist[];
 
   @CreateDateColumn({ type: "timestamp", name: "created_at" })
-  created_at!: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ type: "timestamp", name: "updated_at" })
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn({ type: "timestamp", name: "deleted_at" })
-  deleted_at?: Date | null;
+  deletedAt?: Date | null;
 }
