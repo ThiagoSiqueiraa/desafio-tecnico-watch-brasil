@@ -85,3 +85,43 @@ test("Não deve criar um projeto se o nome for vazio", async () => {
     expect(error.response.data.message).toBe("Nome do projeto é obrigatório");
   }
 });
+
+test("Deve criar uma tarefa a um projeto", async () => {
+  //Given
+  const projectInput = {
+    name: `Projeto-${Math.random().toString(36).substring(2, 10)}`,
+  };
+  const responseCreateProject = await axios.post(
+    "http://localhost:3000/projects",
+    projectInput
+  );
+  const outputCreateProject = responseCreateProject.data;
+  expect(responseCreateProject.status).toBe(200);
+  expect(outputCreateProject.id).toBeDefined();
+  const projectId = outputCreateProject.id;
+  
+  const taskInput = {
+    title: "Minha tarefa",
+    projectId: projectId,
+    status: "pending",
+    priority: "low",
+    dueDate: "2024-12-31",
+  };
+
+  //When
+  const responseCreateTask = await axios.post(
+    "http://localhost:3000/tasks",
+    taskInput
+  );
+  const outputCreateTask = responseCreateTask.data;
+  
+  //Then
+  expect(responseCreateTask.status).toBe(200);
+  expect(outputCreateTask.id).toBeDefined();
+  expect(outputCreateTask.title).toBe(taskInput.title);
+  expect(outputCreateTask.projectId).toBe(taskInput.projectId);
+  expect(outputCreateTask.status).toBe(taskInput.status);
+  expect(outputCreateTask.priority).toBe(taskInput.priority);
+  expect(outputCreateTask.dueDate).toBe(taskInput.dueDate);
+});
+  
