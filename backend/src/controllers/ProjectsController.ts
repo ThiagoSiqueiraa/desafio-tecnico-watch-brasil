@@ -59,4 +59,54 @@ export class ProjectsController {
     await projectRepository.remove(project);
     res.status(204).send();
   }
+
+  async addMember(req: Request, res: Response) {
+    const { projectId } = req.params;
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ message: "Email é obrigatório" });
+    }
+
+    const userRepository = await AppDataSource.getRepository("User");
+    const user = await userRepository.findOne({
+      where: { email: email },
+      select: ["id", "name", "email"],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+    const projectRepository = await AppDataSource.getRepository("Project");
+    const project = await projectRepository.findOne({
+      where: { id: Number(projectId) },
+      relations: ["members", "ownerUser", 'members.user'],
+    });
+    
+    console.log(project)
+    if (!project) {
+      return res.status(404).json({ message: "Projeto não encontrado" });
+    }
+    if (project.ownerUser.id === user.id) {
+        return res.status(400).json({ message: "O dono do projeto já é membro" });
+    }
+    console
+    const isAlreadyMember = project.members.some(
+      (member: any) => member.userId === user.id
+    );
+    if (isAlreadyMember) {
+      return res.status(400).json({ message: "Usuário já é membro do projeto" });
+    }
+
+
+    const projectMemberRepository = await AppDataSource.getRepository("ProjectMember");
+    const memberProjectEntities = projectMemberRepository.create({
+        project: { id: project.id },
+        user: { id: user.id },
+    });
+    await projectMemberRepository.save(memberProjectEntities);
+
+    res.json({ message: "Membro adicionado com sucesso", member: user });
+  }
 }

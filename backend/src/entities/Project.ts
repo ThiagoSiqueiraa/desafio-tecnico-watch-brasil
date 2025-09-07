@@ -5,8 +5,10 @@ import {
   OneToMany,
   JoinColumn,
   OneToOne,
+  ManyToOne,
 } from "typeorm";
 import { User } from "./User";
+import { ProjectMember } from "./ProjectMember";
 
 @Entity({ schema: "app", name: "projects" })
 export class Project {
@@ -16,9 +18,12 @@ export class Project {
   @Column("text")
   name!: string;
 
-
-
-  @OneToOne(() => User, { nullable: false })
+  @ManyToOne(() => User, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn({ name: "owner_user_id" })
   ownerUser!: User;
+
+  @OneToMany(() => ProjectMember, (pm) => pm.project)
+  members!: ProjectMember[];
+
+  
 }

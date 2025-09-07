@@ -4,6 +4,7 @@ import { User } from "./entities/User";
 import { Project } from "./entities/Project";
 import { TaskChecklist } from "./entities/TaskChecklist";
 import { Task } from "./entities/Task";
+import { ProjectMember } from "./entities/ProjectMember";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   password: "123456",
   database: "app",
   synchronize: false,
-  entities: [User, Project, Task, TaskChecklist],
+  entities: [User, Project, Task, TaskChecklist, ProjectMember],
   logging: true,
   logger: "advanced-console",
 });
