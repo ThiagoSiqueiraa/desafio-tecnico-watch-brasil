@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, watch } from 'vue'
-import AddMemberModal from '@/components/tasks/AddMemberModal.vue'
 import type TasksGateway from '@/gateway/TasksGateway'
 import { useAuthStore } from '@/stores/auth'
 
@@ -17,7 +16,6 @@ const dueDate = ref<Date | null>(null)
 const newChecklistItem = ref('')
 const description = ref('')
 const tasks = ref<{ title: string }[]>([])
-const showDialogAddMember = ref(false)
 const members = ref<Member[]>([])
 const emit = defineEmits(['close', 'save', 'onSuccess'])
 const isEditing = ref<boolean>(false)
@@ -89,14 +87,8 @@ function removeItem(index: number) {
   tasks.value.splice(index, 1)
 }
 
-function handleConfirm(membersReceived: any) {
-  members.value = membersReceived
-  showDialogAddMember.value = false
-}
 
-function handleCancel() {
-  showDialogAddMember.value = false
-}
+
 
 watch(showDialog, (val) => {
   if (!val) emit('close')
@@ -175,14 +167,7 @@ onMounted(async () => {
                     locale="pt-BR"
                     :min="new Date()"
                   />
-                  <v-btn
-                    @click="showDialogAddMember = true"
-                    variant="outlined"
-                    height="40"
-                    prepend-icon="mdi-account-multiple-plus"
-                    v-tooltip:bottom="'Adicionar membros à tarefa'"
-                  >
-                  </v-btn>
+                  
                 </div>
               </v-col>
               <v-col cols="12">
