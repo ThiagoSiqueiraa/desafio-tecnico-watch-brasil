@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import type UsersGateway from '@/gateway/UsersGateway'
-import { inject, ref } from 'vue'
+import { inject, ref, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 
-const name = ref<string>('')
-const password = ref<string>('')
-const email = ref<string>('')
+const router = useRouter()
+
+const name = ref('')
+const password = ref('')
+const email = ref('')
 const usersGateway = inject('usersGateway') as UsersGateway
+
 const snackbar = ref(false)
 const snackbarMsg = ref('')
-const snackbarColor = ref('')
+const snackbarColor = ref<'success' | 'error' | ''>('')
+const snackbarTimeout = ref(4000)
+
+let redirectTimer: number | undefined
+const redirectDelayMs = 1800 
 
 async function signup() {
   try {
@@ -17,27 +25,49 @@ async function signup() {
       email: email.value,
       password: password.value,
     })
-    snackbarMsg.value = 'Usuário cadastrado com sucesso!'
+    snackbarMsg.value = 'Usuário cadastrado com sucesso!\nRedirecionando para o login…'
     snackbarColor.value = 'success'
-  } catch (error: any) {
-    snackbarMsg.value = error.response?.data?.message || 'Erro no cadastro'
-    snackbarColor.value = 'error'
-  } finally {
+    snackbarTimeout.value = 4000
     snackbar.value = true
+
+    redirectTimer = window.setTimeout(() => {
+      router.replace({ name: 'login', query: { registered: '1' } })
+    }, redirectDelayMs)
 
     name.value = ''
     email.value = ''
     password.value = ''
+  } catch (error: any) {
+    snackbarMsg.value = error?.response?.data?.message || 'Erro no cadastro'
+    snackbarColor.value = 'error'
+    snackbarTimeout.value = 5000
+    snackbar.value = true
   }
-
-  // Aqui você pode adicionar a lógica para enviar os dados para o backend
 }
+
+function goNow() {
+  if (redirectTimer) clearTimeout(redirectTimer)
+  router.replace({ name: 'login', query: { registered: '1' } })
+}
+
+onBeforeUnmount(() => {
+  if (redirectTimer) clearTimeout(redirectTimer)
+})
 </script>
 
 <template>
-  <v-snackbar location="top right" v-model="snackbar" :color="snackbarColor" timeout="4000">
+  <v-snackbar
+    v-model="snackbar"
+    :color="snackbarColor"
+    location="top right"
+    :timeout="snackbarTimeout"
+  >
     {{ snackbarMsg }}
+    <template #actions>
+      <v-btn variant="text" @click="goNow">Ir agora</v-btn>
+    </template>
   </v-snackbar>
+
   <v-container fluid class="d-flex align-center justify-center" style="height: 100vh">
     <v-row class="justify-center">
       <v-col cols="12" sm="8" md="4">
@@ -46,7 +76,7 @@ async function signup() {
             <v-toolbar-title>Cadastre-se!</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <form ref="form" @submit.prevent="signup()">
+            <form @submit.prevent="signup">
               <v-text-field
                 v-model="email"
                 name="email"
@@ -55,7 +85,7 @@ async function signup() {
                 placeholder="Insira o seu e-mail."
                 variant="outlined"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="name"
                 name="name"
@@ -64,7 +94,7 @@ async function signup() {
                 placeholder="Insira o seu nome."
                 variant="outlined"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="password"
                 name="password"
@@ -73,11 +103,8 @@ async function signup() {
                 placeholder="Insira a sua senha."
                 variant="outlined"
                 required
-              ></v-text-field>
-
-              <v-btn type="submit" class="w-100" color="primary" value="register"
-                >Cadastre-se</v-btn
-              >
+              />
+              <v-btn type="submit" class="w-100" color="primary">Cadastre-se</v-btn>
             </form>
           </v-card-text>
         </v-card>
