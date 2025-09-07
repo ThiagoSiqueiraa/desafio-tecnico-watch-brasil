@@ -33,6 +33,16 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     { path: '/team', name: 'team', component: TeamView, meta: { requiresAuth: true } },
+    {
+      path: '/logout',
+      component: {},
+      beforeEnter() {
+        const auth = useAuthStore()
+        auth.logout()
+        return { name: 'login' }
+      },
+      meta: { requiresAuth: true },
+    }
   ],
 })
 

@@ -14,4 +14,9 @@ export default [
     icon: 'mdi-account-group',
     route: '/team',
   },
+  {
+    title: 'Sair',
+    icon: 'mdi-logout',
+    route: '/logout',
+  }
 ]
