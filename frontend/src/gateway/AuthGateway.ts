@@ -26,7 +26,7 @@ export default class AuthGateway {
 
   async login(input: UserInput): Promise<UserAuthenticated> {
     const { email, password } = input
-    const response = await axios.post<UserAuthenticated>(`${this.baseUrl}/login`, {
+    const response = await axios.post<UserAuthenticated>(`${this.baseUrl}/auth`, {
       email,
       password,
     })
