@@ -17,33 +17,6 @@ app.use("/", routes);
 
 const connection = pgPromise()("postgres://postgres:123456@db:5432/app");
 
-interface CreateProjectBody {
-  name: string;
-}
-
-app.post("/users", async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-  if (!name) {
-    return res.status(400).json({ message: "Nome  é obrigatório" });
-  }
-
-  if (!email) {
-    return res.status(400).json({ message: "Email é obrigatório" });
-  }
-
-  if (!password) {
-    return res.status(400).json({ message: "Senha é obrigatória" });
-  }
-
-  const passwordHash = await hash(password, 10);
-  const id = await connection.query(
-    "INSERT INTO app.users (name, email, password) VALUES ($1, $2, $3) RETURNING id",
-    [name, email, passwordHash]
-  );
-
-  res.json({ id: id[0].id, name, email });
-});
-
 app.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email) {
