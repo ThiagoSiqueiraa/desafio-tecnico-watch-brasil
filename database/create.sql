@@ -41,11 +41,7 @@ create table app.tasks (
     deleted_at timestamp NULL
 );
 
-create table app.tasks_members (
-    task_id BIGINT NOT NULL REFERENCES app.tasks(id),
-    user_id BIGINT NOT NULL REFERENCES app.users(id),
-    primary key (task_id, user_id)
-);
+
 
 create table app.tasks_checklists (
     id BIGSERIAL primary key,
