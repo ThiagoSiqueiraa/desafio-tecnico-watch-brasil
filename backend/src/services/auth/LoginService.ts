@@ -30,7 +30,14 @@ export class LoginService {
     if (!isPasswordValid) {
       throw new Error("E-mail ou senha inválido");
     }
-    const acessToken = await sign(user, process.env.JWT_SECRET as string);
+    const acessToken = await sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      process.env.JWT_SECRET as string
+    );
     const output = {
       id: user.id,
       name: user.name,

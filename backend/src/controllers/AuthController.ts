@@ -8,6 +8,7 @@ export class LoginController {
 
   async login(req: Request, res: Response) {
     try {
+        console.log(req.body)
       const { email, password } = req.body;
       const user = await this.loginService.execute({
         email,

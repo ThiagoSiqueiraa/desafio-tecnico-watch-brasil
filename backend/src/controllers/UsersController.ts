@@ -32,6 +32,7 @@ export class UsersController {
       const profile = await this.getProfileService.execute({ userId });
       res.json(profile);
     } catch (err) {
+        console.log(err)
       res.status(400).json({ message: (err as Error).message });
     }
   }
