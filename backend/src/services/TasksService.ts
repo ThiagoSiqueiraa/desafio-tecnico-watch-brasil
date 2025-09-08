@@ -76,20 +76,21 @@ export class TasksService {
       throw new Error("Checklist é obrigatória e deve conter ao menos um item");
     }
 
-    const actualProjectUser = await this.userRepository.find({
+    const actualProjectUser = await this.userRepository.findOne({
       where: { id: userId },
       relations: ["currentProject"],
     });
 
-    if (actualProjectUser.length === 0) {
+    if (!actualProjectUser) {
       throw new Error("Usuário não encontrado");
     }
 
-    if (!actualProjectUser[0].currentProject) {
+    console.log(actualProjectUser)
+    if (!actualProjectUser.currentProject) {
       throw new Error("Usuário não está em um projeto");
     }
 
-    const projectId = actualProjectUser[0].currentProject.id;
+    const projectId = actualProjectUser.currentProject.id;
 
     const newTask = await this.taskRepository.create({
       title,
