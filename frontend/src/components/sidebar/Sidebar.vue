@@ -39,10 +39,32 @@ function handleClose() {
 
 async function handleSubmit(event: { title: string }) {
   // Lógica para salvar o novo projeto
-  console.log('Salvar novo projeto:', event)
-  const project = await projectGateway.create(event.title, useAuthStore().token)
-  projects.value.push(project)
-  showAddNewProject.value = false
+  try {
+    console.log('Salvar novo projeto:', event)
+    const project = await projectGateway.create(event.title, useAuthStore().token)
+    projects.value.push(project)
+    showAddNewProject.value = false
+    Swal.fire({
+      icon: 'success',
+      title: 'Projeto criado com sucesso!',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'my-custom-button-text',
+      },
+    })
+  } catch (e: any) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao criar projeto',
+      text: e?.response?.data?.message || 'Tente novamente mais tarde',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'my-custom-button-text',
+      },
+    })
+  }
 }
 
 function getPossibleProjects() {
