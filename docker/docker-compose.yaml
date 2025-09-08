@@ -13,15 +13,11 @@ services:
         target: /app/node_modules
     ports:
       - 5173:5173
-    environment:
-      OTEL_SERVICE_NAME: api-backend
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
     networks:
       - app-network
     depends_on:
       - backend
       - db
-      - jaeger
   backend:
     build:
       context: ../backend
@@ -38,8 +34,12 @@ services:
       - 3000:3000
     networks:
       - app-network
+    environment:
+      OTEL_SERVICE_NAME: api-backend
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
     depends_on:
       - db
+      - jaeger
   db:
     image: postgres:14.3
     ports:
@@ -48,13 +48,13 @@ services:
       - ../database/create.sql:/docker-entrypoint-initdb.d/init.sql
       - type: volume
         target: /var/lib/postgresql/data
-
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: app
     networks:
       - app-network
+
   jaeger:
     image: jaegertracing/all-in-one:1.60
     ports:

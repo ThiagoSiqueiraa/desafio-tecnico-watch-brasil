@@ -17,6 +17,17 @@ A arquitetura do backend segue a estrutura Controller -> Service -> Repository
 
 ## Documentação
 A API possui uma documentação nos padrões OpenAPI que pode ser consultada em `http://localhost:3000/docs` (ou a porta que você tenha escolhido)
+![Tela de documentação API](./images/tela_documentacao_api.png "Tela de gerenciamento de membros")
+
+## Observabilidade
+Para isso foi utilizado Jaeger + OpenTelemetry, os logs da aplicação podem ser visualizados em `http://localhost:16686/
+`
+![Tela de logs API](./images/tela_jaeger.png "Tela de gerenciamento de membros")
+
+#### Por algum motivo não consegui fazer rodar corretamente a geração de logs quando executado pelo docker, se remover o backend do docker-compose e executar ele por fora, funciona. Acredito que seja algo na comunicação dos dois containers backend x jaeger (parece ser algo inconstante, as vezes vai pelo docker)
+
+## Observações
+
 ## Dependências
 
 - Node.js (>= 22.19)
