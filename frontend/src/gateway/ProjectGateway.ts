@@ -45,8 +45,14 @@ export default class ProjectGateway {
     await axios.delete(`${this.baseUrl}/projects/${id}`)
   }
 
-  async changeActualProject(projectId: number, token: string): Promise<{ message: string; currentProject: { id: number; name: string } }> {
-    const response = await axios.put<{ message: string; currentProject: { id: number; name: string } }>(
+  async changeActualProject(
+    projectId: number,
+    token: string,
+  ): Promise<{ message: string; currentProject: { id: number; name: string } }> {
+    const response = await axios.put<{
+      message: string
+      currentProject: { id: number; name: string }
+    }>(
       `${this.baseUrl}/projects/changeActualProject/${projectId}`,
       {},
       {
@@ -57,11 +63,25 @@ export default class ProjectGateway {
     )
     return response.data
   }
-  
-  async addMember(projectId: number, email: string, token: string): Promise<{ message: string }> {
-    const response = await axios.post<{ message: string }>(
+
+  async addMember(projectId: number, email: string, token: string): Promise<void> {
+    await axios.post<void>(
       `${this.baseUrl}/projects/addMember/${projectId}`,
       { email },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+  }
+
+  async listMembers(
+    projectId: number,
+    token: string,
+  ): Promise<{ id: number; name: string; email: string }[]> {
+    const response = await axios.get<{ id: number; name: string; email: string }[]>(
+      `${this.baseUrl}/projects/members/${projectId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,23 +91,20 @@ export default class ProjectGateway {
     return response.data
   }
 
-  async listMembers(projectId: number, token: string): Promise<{ id: number; name: string; email: string }[]> {
-    const response = await axios.get<{ id: number; name: string; email: string }[]>(`${this.baseUrl}/projects/members/${projectId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  async removeMember(
+    projectId: number,
+    userId: number,
+    token: string,
+  ): Promise<{ message: string }> {
+    const response = await axios.delete<{ message: string }>(
+      `${this.baseUrl}/projects/removeMember/${projectId}`,
+      {
+        data: { userId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     return response.data
   }
-  
-  async removeMember(projectId: number, userId: number, token: string): Promise<{ message: string }> {
-    const response = await axios.delete<{ message: string }>(`${this.baseUrl}/projects/removeMember/${projectId}`, {
-      data: { userId },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    return response.data
-  }
-  
 }
