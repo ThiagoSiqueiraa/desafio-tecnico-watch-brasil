@@ -66,7 +66,6 @@ const projectController = new ProjectsController(
  */
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
 
-
 router.get("/:id", verifyToken, (req, res) =>
   projectController.getById(req, res)
 );
@@ -92,11 +91,9 @@ router.get("/:id", verifyToken, (req, res) =>
  */
 router.get("/", verifyToken, (req, res) => projectController.list(req, res));
 
-
 router.delete("/:id", verifyToken, (req, res) =>
   projectController.delete(req, res)
 );
-
 
 /**
  * @openapi
@@ -178,10 +175,56 @@ router.post("/addMember/:projectId", verifyToken, (req, res) =>
  *       '404':
  *         description: Projeto não encontrado
  */
-router.get("/members/:projectId"  , verifyToken, (req, res) =>
+router.get("/members/:projectId", verifyToken, (req, res) =>
   projectController.listMembers(req, res)
 );
 
+/**
+ * @openapi
+ * /projects/changeActualProject/{projectId}:
+ *   put:
+ *     tags:
+ *       - projects
+ *     summary: Alterar projeto atual do usuário autenticado
+ *     operationId: changeActualProject
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do novo projeto a ser definido como atual
+ *     responses:
+ *       '200':
+ *         description: Projeto atual alterado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Projeto atual alterado com sucesso"
+ *                 currentProject:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 3
+ *                     name:
+ *                       type: string
+ *                       example: "Projeto de Exemplo"
+ *       '400':
+ *         description: Requisição inválida
+ *       '401':
+ *         description: Não autenticado
+ *       '404':
+ *         description: Usuário ou projeto não encontrado
+ *       '403':
+ *         description: Usuário não é membro do projeto
+ */
 router.put("/changeActualProject/:projectId", verifyToken, (req, res) =>
   projectController.changeActualProject(req, res)
 );
