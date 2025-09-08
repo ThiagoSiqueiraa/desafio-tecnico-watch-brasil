@@ -7,6 +7,7 @@ import { GetProjectService } from "../services/projects/GetProjectService";
 import { ListProjectsService } from "../services/projects/ListProjectsService";
 import { AddMemberInProjectService } from "../services/projects/AddMemberInProjectService";
 import { ListMembersInProjectService } from "../services/projects/ListMembersInProjectService";
+import { ChangeActualProjectService } from "../services/users/ChangeActualProjectService";
 
 const router = Router();
 const projectController = new ProjectsController(
@@ -21,7 +22,12 @@ const projectController = new ProjectsController(
     AppDataSource.getRepository("ProjectMember"),
     AppDataSource.getRepository("User")
   ),
-  new ListMembersInProjectService(AppDataSource.getRepository("Project"))
+  new ListMembersInProjectService(AppDataSource.getRepository("Project")),
+  new ChangeActualProjectService(
+    AppDataSource.getRepository("Project"),
+    AppDataSource.getRepository("User"),
+    AppDataSource.getRepository("ProjectMember")
+  )
 );
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
 router.get("/:id", verifyToken, (req, res) =>

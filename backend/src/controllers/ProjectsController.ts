@@ -5,6 +5,7 @@ import { GetProjectService } from "../services/projects/GetProjectService";
 import { ListProjectsService } from "../services/projects/ListProjectsService";
 import { AddMemberInProjectService } from "../services/projects/AddMemberInProjectService";
 import { ListMembersInProjectService } from "../services/projects/ListMembersInProjectService";
+import { ChangeActualProjectService } from "../services/users/ChangeActualProjectService";
 
 export class ProjectsController {
   constructor(
@@ -12,7 +13,8 @@ export class ProjectsController {
     private getProjectService: GetProjectService,
     private listProjectsService: ListProjectsService,
     private addMemberInProjectService: AddMemberInProjectService,
-    private listMembersInProjectService: ListMembersInProjectService
+    private listMembersInProjectService: ListMembersInProjectService,
+    private changeActualProjectService: ChangeActualProjectService
   ) {}
 
   async create(req: Request, res: Response) {
@@ -81,25 +83,15 @@ export class ProjectsController {
   }
 
   async listMembers(req: Request, res: Response) {
-    const { projectId } = req.params;
-
-    const projectRepository = await AppDataSource.getRepository("Project");
-    const project = await projectRepository.findOne({
-      where: { id: Number(projectId) },
-      relations: ["members", "members.user"],
-    });
-
-    if (!project) {
-      return res.status(404).json({ message: "Projeto não encontrado" });
+    try {
+      const { projectId } = req.params;
+      const members = await this.listMembersInProjectService.execute({
+        projectId: Number(projectId),
+      });
+      return res.json(members);
+    } catch (e: any) {
+      return res.status(400).json({ message: e.message });
     }
-
-    const members = project.members.map((member: any) => ({
-      id: member.user.id,
-      name: member.user.name,
-      email: member.user.email,
-    }));
-
-    res.json(members);
   }
 
   async changeActualProject(req: Request, res: Response) {
@@ -107,45 +99,13 @@ export class ProjectsController {
       const { projectId } = req.params;
 
       const userId = (req as any).user.id;
-
-      const userRepository = await AppDataSource.getRepository("User");
-      const user = await userRepository.findOne({
-        where: { id: userId },
-        relations: ["currentProject"],
+      const project = await this.changeActualProjectService.execute({
+        projectId: Number(projectId),
+        userId,
       });
-
-      if (!user) {
-        return res.status(404).json({ message: "Usuário não encontrado" });
-      }
-
-      const projectRepository = await AppDataSource.getRepository("Project");
-      const project = await projectRepository.findOne({
-        where: { id: Number(projectId) },
-      });
-
-      if (!project) {
-        return res.status(404).json({ message: "Projeto não encontrado" });
-      }
-
-      const projectMemberRepository = await AppDataSource.getRepository(
-        "ProjectMember"
-      );
-      const isMember = await projectMemberRepository.findOne({
-        where: { project: { id: project.id }, user: { id: user.id } },
-      });
-
-      if (!isMember) {
-        return res
-          .status(403)
-          .json({ message: "Usuário não é membro do projeto" });
-      }
-
-      user.currentProject = project;
-      await userRepository.save(user);
-
-      res.json({
+      return res.json({
         message: "Projeto atual alterado com sucesso",
-        currentProject: { id: project.id, name: project.name },
+        currentProject: project,
       });
     } catch (e: any) {
       return res
