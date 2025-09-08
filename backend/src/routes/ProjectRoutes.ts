@@ -136,13 +136,89 @@ router.post("/addMember/:projectId", verifyToken, (req, res) =>
   projectController.addMember(req, res)
 );
 
-
+/**
+ * @openapi
+ * /projects/members/{projectId}:
+ *   get:
+ *     tags:
+ *       - projects
+ *     summary: Listar membros de um projeto
+ *     operationId: listProjectMembers
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     responses:
+ *       '200':
+ *         description: Lista de membros do projeto
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "1"
+ *                   name:
+ *                     type: string
+ *                     example: "Fulaninho de tal"
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     example: "sample@gmail.com"
+ *       '401':
+ *         description: Não autenticado
+ *       '404':
+ *         description: Projeto não encontrado
+ */
 router.get("/members/:projectId"  , verifyToken, (req, res) =>
   projectController.listMembers(req, res)
 );
+
 router.put("/changeActualProject/:projectId", verifyToken, (req, res) =>
   projectController.changeActualProject(req, res)
 );
+
+/**
+ * @openapi
+ * /projects/removeMember/{projectId}:
+ *   delete:
+ *     tags:
+ *       - projects
+ *     summary: Remover membro do projeto
+ *     operationId: removeProjectMember
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 example: 42
+ *     responses:
+ *       '204':
+ *         description: Membro removido com sucesso (sem conteúdo no corpo)
+ */
 router.delete("/removeMember/:projectId", verifyToken, (req, res) =>
   projectController.removeMember(req, res)
 );
