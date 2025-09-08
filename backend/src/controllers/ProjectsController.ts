@@ -128,7 +128,7 @@ export class ProjectsController {
         requestingUserId,
       });
 
-      return res.json({ message: "Membro removido com sucesso" });
+      return res.sendStatus(204);
     } catch (e) {
       return res.status(400).json({ message: (e as Error).message });
     }

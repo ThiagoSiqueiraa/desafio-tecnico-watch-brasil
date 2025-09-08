@@ -96,7 +96,7 @@ export default class ProjectGateway {
     userId: number,
     token: string,
   ): Promise<{ message: string }> {
-    const response = await axios.delete<{ message: string }>(
+    const response = await axios.delete<void>(
       `${this.baseUrl}/projects/removeMember/${projectId}`,
       {
         data: { userId },
@@ -105,6 +105,6 @@ export default class ProjectGateway {
         },
       },
     )
-    return response.data
+
   }
 }
