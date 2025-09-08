@@ -204,7 +204,7 @@ onMounted(async () => {
                       <v-list-item-title class="d-flex align-center">
                         <span v-if="isEditing">
                           <v-checkbox
-                            v-model="task.completed"
+                            v-model="task.isDone"
                             density="compact"
                             hide-details
                             :label="''"
