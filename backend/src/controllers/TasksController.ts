@@ -107,88 +107,22 @@ export class TasksController {
   }
 
   async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const { title, status, priority, dueDate, description, checklist } =
-      req.body;
-    if (!id) {
-      return res.status(400).json({ message: "ID da tarefa é obrigatório" });
-    }
-    if (!title) {
-      return res.status(400).json({ message: "Título é obrigatório" });
-    }
+    try {
+      const { id } = req.params;
+      const { title, status, priority, dueDate, description, checklist } =
+        req.body;
 
-    if (!status) {
-      return res.status(400).json({ message: "Status é obrigatório" });
-    }
-    if (!["pending", "in_progress", "completed"].includes(status)) {
-      return res.status(400).json({
-        message:
-          "Status inválido, informe os status possíveis: 'pending', 'in_progress', 'completed'",
+      const output = await this.tasksService.update(Number(id), {
+        title,
+        status,
+        priority,
+        dueDate,
+        description,
+        checklist,
       });
+      res.json(output);
+    } catch (e) {
+      return res.status(400).json({ message: (e as Error).message });
     }
-    if (!priority) {
-      return res.status(400).json({ message: "Prioridade é obrigatória" });
-    }
-    if (!dueDate) {
-      return res
-        .status(400)
-        .json({ message: "Data de vencimento é obrigatória" });
-    }
-    //checa o formato da data
-    if (isNaN(Date.parse(dueDate))) {
-      return res
-        .status(400)
-        .json({ message: "Data de vencimento em formato inválido" });
-    }
-    if (!checklist || checklist.length === 0) {
-      return res.status(400).json({
-        message: "Checklist é obrigatória e deve ter ao menos um item",
-      });
-    }
-    const tasksRepository = await AppDataSource.getRepository("Task");
-    const task = await tasksRepository.findOne({
-      where: { id: Number(id) },
-      relations: ["checklist", "project"],
-    });
-    if (!task) {
-      return res.status(404).json({ message: "Tarefa não encontrada" });
-    }
-    // Atualiza os campos da tarefa
-    task.title = title;
-    task.status = status;
-    task.priority = priorityDictonary[priority];
-    task.dueDate = dueDate;
-    task.description = description;
-
-    await tasksRepository.save(task);
-    // Atualiza a checklist
-    const checklistRepository = await AppDataSource.getRepository(
-      "TaskChecklist"
-    );
-    // Remove os itens antigos da checklist
-    await checklistRepository.delete({ task: { id: task.id } });
-    // Cria as novas entidades de checklist associadas à tarefa
-    const checklistEntities = checklist.map((it: any, idx: number) =>
-      checklistRepository.create({
-        title: it.title,
-        done: !!it.done,
-        order: it.order ?? idx,
-        task: { id: task.id }, // associa por FK
-      })
-    );
-    await checklistRepository.save(checklistEntities);
-    const output = {
-      id: task.id,
-      title: task.title,
-      status: task.status,
-      priority: reversePriorityDictonary[task.priority],
-      dueDate: task.dueDate,
-      description: task.description,
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-      checklist: checklistEntities,
-      projectId: task.project.id,
-    };
-    res.json(output);
   }
 }

@@ -68,7 +68,6 @@ export class TasksService {
       throw new Error("Data de vencimento é obrigatória");
     }
 
-    //checa o formato da data
     if (isNaN(Date.parse(dueDate))) {
       throw new Error("Data de vencimento em formato inválido");
     }
@@ -92,8 +91,6 @@ export class TasksService {
 
     const projectId = actualProjectUser[0].currentProject.id;
 
-    // Cria as entidades de checklist associadas à tarefa
-
     const newTask = await this.taskRepository.create({
       title,
       status,
@@ -112,7 +109,7 @@ export class TasksService {
         ...(typeof it.order !== "undefined"
           ? { order: it.order }
           : { order: idx }),
-        task: { id: savedTask.id }, // associa por FK
+        task: { id: savedTask.id },
       } as Partial<TaskChecklist>)
     );
 
@@ -123,12 +120,105 @@ export class TasksService {
       title: savedTask.title,
       status: savedTask.status,
       priority: savedTask.priority,
-      dueDate: savedTask.dueDate as Date, 
+      dueDate: savedTask.dueDate as Date,
       description: savedTask.description,
       createdAt: savedTask.createdAt,
       updatedAt: savedTask.updatedAt,
       completedSubtasks: 0,
       totalSubtasks: checklist.length,
     };
+  }
+
+  async update(
+    id: number,
+    input: {
+      title: string;
+      status: string;
+      priority: string;
+      dueDate: string;
+      description?: string;
+      checklist: { title: string; done?: boolean; order?: number }[];
+    }
+  ): Promise<{
+    id: number;
+    title: string;
+    status: string;
+    priority: string;
+    dueDate: Date;
+    description?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    checklist: TaskChecklist[];
+    projectId: number;
+  }> {
+    const { title, status, priority, dueDate, description, checklist } = input;
+    if (!id) {
+      throw new Error("ID da tarefa é obrigatório");
+    }
+    if (!title) {
+      throw new Error("Título é obrigatório");
+    }
+
+    if (!status) {
+      throw new Error("Status é obrigatório");
+    }
+    if (!["pending", "in_progress", "completed"].includes(status)) {
+      throw new Error(
+        "Status inválido, informe os status possíveis: 'pending', 'in_progress', 'completed'"
+      );
+    }
+    if (!priority) {
+      throw new Error("Prioridade é obrigatória");
+    }
+    if (!dueDate) {
+      throw new Error("Data de vencimento é obrigatória");
+    }
+    //checa o formato da data
+    if (isNaN(Date.parse(dueDate))) {
+      throw new Error("Data de vencimento em formato inválido");
+    }
+    if (!checklist || checklist.length === 0) {
+      throw new Error("Checklist é obrigatória e deve conter ao menos um item");
+    }
+    const task = await this.taskRepository.findOne({
+      where: { id: Number(id) },
+      relations: ["checklist", "project"],
+    });
+    if (!task) {
+      throw new Error("Tarefa não encontrada");
+    }
+    task.title = title;
+    task.status = status;
+    task.priority = this.priorityDictonary[priority];
+    task.dueDate = new Date(dueDate);
+    task.description = description;
+
+    await this.taskRepository.save(task);
+
+    await this.checklistRepository.delete({ task: { id: task.id } });
+    const checklistEntities = checklist.map((it: any, idx: number) =>
+      this.checklistRepository.create({
+        ...(it.title && { title: it.title }),
+        ...(typeof it.done !== "undefined" && { done: !!it.done }),
+        ...(typeof it.order !== "undefined"
+          ? { order: it.order }
+          : { order: idx }),
+        task: { id: task.id },
+      } as Partial<TaskChecklist>)
+    );
+    await this.checklistRepository.save(checklistEntities);
+    const output = {
+      id: task.id,
+      title: task.title,
+      status: task.status,
+      priority: this.reversePriorityDictonary[task.priority],
+      dueDate: task.dueDate,
+      description: task.description,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      checklist: checklistEntities,
+      projectId: task.project.id,
+    };
+    return output;
   }
 }
