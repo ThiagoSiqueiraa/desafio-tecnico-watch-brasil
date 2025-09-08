@@ -16,7 +16,7 @@ A arquitetura do backend segue a estrutura Controller -> Service -> Repository
 #### Banco de dados: PostgresSQL ( a criação da estrutura do banco será realizada no momento que o docker-compose for executado)
 
 ## Documentação
-A API possui uma documentação nos padrões OpenAPI que pode ser consultada em `http://localhost:3000`
+A API possui uma documentação nos padrões OpenAPI que pode ser consultada em `http://localhost:3000/docs`
 
 ## Dependências
 
