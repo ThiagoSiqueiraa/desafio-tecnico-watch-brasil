@@ -1,7 +1,5 @@
 import { Task } from "../entities/Task";
 import { Repository } from "typeorm";
-import { User } from "../entities/User";
-import { TaskChecklist } from "../entities/TaskChecklist";
 
 export class GetTaskService {
   reversePriorityDictonary: {
