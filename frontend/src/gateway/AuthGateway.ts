@@ -22,7 +22,7 @@ export interface UserInput {
   password: string
 }
 export default class AuthGateway {
-  private baseUrl: string = 'http://localhost:3000'
+  private baseUrl: string = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
   async login(input: UserInput): Promise<UserAuthenticated> {
     const { email, password } = input

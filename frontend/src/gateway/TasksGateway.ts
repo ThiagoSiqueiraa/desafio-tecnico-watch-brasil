@@ -7,7 +7,7 @@ export interface Project {
 }
 
 export default class TasksGateway {
-  private baseUrl: string = 'http://localhost:3000'
+  private baseUrl: string = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
   async list(projectId: number, token: string): Promise<any[]> {
     const response = await axios.get<any[]>(`${this.baseUrl}/tasks/${projectId}`, {

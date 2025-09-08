@@ -7,7 +7,7 @@ export interface Project {
 }
 
 export default class ProjectGateway {
-  private baseUrl: string = 'http://localhost:3000'
+  private baseUrl: string = (typeof process !== 'undefined' && process.env.VITE_API_URL) ? process.env.VITE_API_URL : 'http://localhost:3000'
 
   async list(token: string, userId: number): Promise<Project[]> {
     const response = await axios.get<Project[]>(`${this.baseUrl}/projects?userId=${userId}`, {
