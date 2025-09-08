@@ -14,6 +14,21 @@ export const swaggerSpec = swaggerJSDoc({
         bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" },
       },
       schemas: {
+        ProjectInput: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+          },
+          required: ["name"],
+        },
+        ProjectList: {
+          type: "object",
+          properties: {
+            id: { type: "integer", readOnly: true },
+            name: { type: "string" },
+          },
+          required: ["id", "name"],
+        },
         TaskBase: {
           type: "object",
           properties: {

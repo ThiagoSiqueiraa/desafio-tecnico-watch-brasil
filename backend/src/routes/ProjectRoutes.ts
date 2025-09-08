@@ -35,6 +35,35 @@ const projectController = new ProjectsController(
     AppDataSource.getRepository("ProjectMember")
   )
 );
+
+/**
+ * @openapi
+ * /projects:
+ *   post:
+ *     tags:
+ *       - projects
+ *     summary: Criar um projeto
+ *     operationId: createProject
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProjectInput'
+ *           examples:
+ *             exemplo:
+ *               value:
+ *                name: "Projeto Exemplo"
+ *     responses:
+ *       '201':
+ *         description: Criado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectList'
+ */
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
 router.get("/:id", verifyToken, (req, res) =>
   projectController.getById(req, res)

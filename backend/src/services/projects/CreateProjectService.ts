@@ -29,6 +29,9 @@ export class CreateProjectService {
     });
     await this.projectMembersRepository.save(memberProjectEntities);
 
-    return output;
+    return {
+      id: output.id,
+      name: output.name,
+    };
   }
 }
