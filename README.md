@@ -37,6 +37,8 @@ A API possui uma documentação nos padrões OpenAPI que pode ser consultada em 
 
 Para rodar o projeto em ambiente de desenvolvimento:
 
+Crie um .env para o backend com base no .env para funcionamento do sistema.
+
 ```bash
 cd docker
 docker-compose up

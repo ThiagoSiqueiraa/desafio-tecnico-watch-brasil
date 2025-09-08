@@ -12,5 +12,5 @@ app.use(cors());
 app.use("/", routes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-console.log("Server running on http://localhost:3000");
+console.log("Server running on http://backend:3000");
 app.listen(3000);

@@ -1,4 +1,23 @@
 services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: web-frontend:7
+    init: true
+    volumes:
+      - type: bind
+        source: ../frontend/
+        target: /app
+      - type: volume
+        target: /app/node_modules
+    ports:
+      - 5173:5173
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - db
   backend:
     build:
       context: ../backend
@@ -32,7 +51,7 @@ services:
       POSTGRES_DB: app
     networks:
       - app-network
-      
+
 networks:
   app-network:
     driver: bridge

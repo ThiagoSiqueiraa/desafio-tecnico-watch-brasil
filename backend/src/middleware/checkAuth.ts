@@ -14,6 +14,7 @@ export function verifyToken(
   verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
     if (err) return res.sendStatus(403);
     (req as any).user = user;
+    console.log(user)
     next();
   });
 }

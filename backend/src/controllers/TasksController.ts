@@ -18,7 +18,7 @@ export class TasksController {
     try {
       const { title, status, priority, dueDate, description, checklist } =
         req.body;
-      const userId = (req as any).userId;
+      const userId = (req as any).user.id;
       const output = await this.tasksService.create({
         title,
         status,
