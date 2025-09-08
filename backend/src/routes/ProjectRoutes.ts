@@ -66,7 +66,6 @@ const projectController = new ProjectsController(
  */
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
 
-
 router.get("/:id", verifyToken, (req, res) =>
   projectController.getById(req, res)
 );
@@ -92,23 +91,177 @@ router.get("/:id", verifyToken, (req, res) =>
  */
 router.get("/", verifyToken, (req, res) => projectController.list(req, res));
 
-
 router.delete("/:id", verifyToken, (req, res) =>
   projectController.delete(req, res)
 );
 
-
+/**
+ * @openapi
+ * /projects/addMember/{projectId}:
+ *   post:
+ *     tags:
+ *       - projects
+ *     summary: Adicionar membro ao projeto
+ *     operationId: addProjectMember
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "usuario@exemplo.com"
+ *     responses:
+ *       '201':
+ *         description: Membro adicionado com sucesso (sem conteúdo no corpo)
+ */
 router.post("/addMember/:projectId", verifyToken, (req, res) =>
   projectController.addMember(req, res)
 );
 
-
-router.get("/members/:projectId"  , verifyToken, (req, res) =>
+/**
+ * @openapi
+ * /projects/members/{projectId}:
+ *   get:
+ *     tags:
+ *       - projects
+ *     summary: Listar membros de um projeto
+ *     operationId: listProjectMembers
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     responses:
+ *       '200':
+ *         description: Lista de membros do projeto
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "1"
+ *                   name:
+ *                     type: string
+ *                     example: "Fulaninho de tal"
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     example: "sample@gmail.com"
+ *       '401':
+ *         description: Não autenticado
+ *       '404':
+ *         description: Projeto não encontrado
+ */
+router.get("/members/:projectId", verifyToken, (req, res) =>
   projectController.listMembers(req, res)
 );
+
+/**
+ * @openapi
+ * /projects/changeActualProject/{projectId}:
+ *   put:
+ *     tags:
+ *       - projects
+ *     summary: Alterar projeto atual do usuário autenticado
+ *     operationId: changeActualProject
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do novo projeto a ser definido como atual
+ *     responses:
+ *       '200':
+ *         description: Projeto atual alterado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Projeto atual alterado com sucesso"
+ *                 currentProject:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 3
+ *                     name:
+ *                       type: string
+ *                       example: "Projeto de Exemplo"
+ *       '400':
+ *         description: Requisição inválida
+ *       '401':
+ *         description: Não autenticado
+ *       '404':
+ *         description: Usuário ou projeto não encontrado
+ *       '403':
+ *         description: Usuário não é membro do projeto
+ */
 router.put("/changeActualProject/:projectId", verifyToken, (req, res) =>
   projectController.changeActualProject(req, res)
 );
+
+/**
+ * @openapi
+ * /projects/removeMember/{projectId}:
+ *   delete:
+ *     tags:
+ *       - projects
+ *     summary: Remover membro do projeto
+ *     operationId: removeProjectMember
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 example: 42
+ *     responses:
+ *       '204':
+ *         description: Membro removido com sucesso (sem conteúdo no corpo)
+ */
 router.delete("/removeMember/:projectId", verifyToken, (req, res) =>
   projectController.removeMember(req, res)
 );

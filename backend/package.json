@@ -5,6 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "start": "ts-node src/main.ts",
+    "dev:jaeger": "tsx --import ./src/tracing.ts src/main.ts",
     "nodemon": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:jest": "jest"
@@ -13,6 +14,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "0.62.2",
+    "@opentelemetry/exporter-trace-otlp-http": "0.204.0",
+    "@opentelemetry/instrumentation-http": "^0.204.0",
+    "@opentelemetry/instrumentation-pg": "^0.56.1",
+    "@opentelemetry/resources": "2.1.0",
+    "@opentelemetry/sdk-node": "0.204.0",
+    "@opentelemetry/semantic-conventions": "1.37.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -26,7 +34,8 @@
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.26",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "tsx": "^4.20.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

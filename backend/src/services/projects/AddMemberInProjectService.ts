@@ -58,7 +58,5 @@ export class AddMemberInProjectService {
       user: { id: user.id },
     });
     await this.projectMembersRepository.save(memberProjectEntities);
-
-    return user;
   }
 }

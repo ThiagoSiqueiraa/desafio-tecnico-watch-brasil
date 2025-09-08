@@ -7,7 +7,7 @@ export interface User {
 }
 
 export default class UsersGateway {
-  private baseUrl: string = 'http://localhost:3000'
+  private baseUrl: string = (typeof process !== 'undefined' && process.env.VITE_API_URL) ? process.env.VITE_API_URL : 'http://localhost:3000'
 
   async create(input: { name: string; email: string; password: string }): Promise<User> {
     const { name, email, password } = input

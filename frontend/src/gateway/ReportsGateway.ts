@@ -12,7 +12,7 @@ export interface ReportsDTO {
   }
 }
 export default class ReportsGateway {
-  private baseUrl: string = 'http://localhost:3000'
+  private baseUrl: string = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
   async get(projectId: number, token: string): Promise<ReportsDTO> {
     const response = await axios.get<ReportsDTO>(`${this.baseUrl}/reports?projectId=${projectId}`, {

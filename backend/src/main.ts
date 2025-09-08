@@ -6,11 +6,12 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./infra/swagger";
 
 dotenv.config();
+const port = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/", routes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-console.log("Server running on http://backend:3000");
-app.listen(3000);
+console.log(`Server running on http://localhost:${port}`);
+app.listen(port);

@@ -3,7 +3,7 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
-    image: web-frontend:7
+    image: web-frontend:8
     init: true
     volumes:
       - type: bind
@@ -22,7 +22,7 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
-    image: api-backend:7
+    image: api-backend:8
     init: true
     volumes:
       - type: bind
@@ -34,8 +34,12 @@ services:
       - 3000:3000
     networks:
       - app-network
+    environment:
+      OTEL_SERVICE_NAME: api-backend
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
     depends_on:
       - db
+      - jaeger
   db:
     image: postgres:14.3
     ports:
@@ -44,11 +48,19 @@ services:
       - ../database/create.sql:/docker-entrypoint-initdb.d/init.sql
       - type: volume
         target: /var/lib/postgresql/data
-
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: app
+    networks:
+      - app-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.60
+    ports:
+      - "16686:16686" # UI
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
     networks:
       - app-network
 

@@ -106,10 +106,6 @@ export class TasksService {
     const checklistEntities = checklist.map((it: any, idx: number) =>
       this.checklistRepository.create({
         ...(it.title && { title: it.title }),
-        ...(typeof it.done !== "undefined" && { done: !!it.done }),
-        ...(typeof it.order !== "undefined"
-          ? { order: it.order }
-          : { order: idx }),
         task: { id: savedTask.id },
       } as Partial<TaskChecklist>)
     );
@@ -201,7 +197,6 @@ export class TasksService {
       this.checklistRepository.create({
         ...(it.title && { title: it.title }),
         ...(typeof it.isDone !== "undefined" && { isDone: !!it.isDone }),
-
         task: { id: task.id },
       } as Partial<TaskChecklist>)
     );

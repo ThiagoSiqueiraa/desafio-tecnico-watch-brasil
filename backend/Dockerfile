@@ -15,4 +15,4 @@ USER node
 
 COPY . .
 
-CMD [ "npm", "run", "nodemon" ]
+CMD [ "npm", "run", "dev:jaeger" ]
