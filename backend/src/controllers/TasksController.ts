@@ -3,14 +3,6 @@ import { TasksService } from "../services/TasksService";
 import { ListTasksByProjectService } from "../services/ListTasksByProjectService";
 import { GetTaskService } from "../services/GetTaskService";
 
-const priorityDictonary: {
-  [key: string]: number;
-} = { low: 1, medium: 2, high: 3 };
-
-const reversePriorityDictonary: {
-  [key: number]: string;
-} = { 1: "low", 2: "medium", 3: "high" };
-
 export class TasksController {
   constructor(
     private tasksService: TasksService,
