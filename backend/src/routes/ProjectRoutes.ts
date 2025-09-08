@@ -98,6 +98,40 @@ router.delete("/:id", verifyToken, (req, res) =>
 );
 
 
+/**
+ * @openapi
+ * /projects/addMember/{projectId}:
+ *   post:
+ *     tags:
+ *       - projects
+ *     summary: Adicionar membro ao projeto
+ *     operationId: addProjectMember
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do projeto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "usuario@exemplo.com"
+ *     responses:
+ *       '201':
+ *         description: Membro adicionado com sucesso (sem conteúdo no corpo)
+ */
 router.post("/addMember/:projectId", verifyToken, (req, res) =>
   projectController.addMember(req, res)
 );
