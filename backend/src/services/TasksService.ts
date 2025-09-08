@@ -138,7 +138,7 @@ export class TasksService {
       priority: string;
       dueDate: string;
       description?: string;
-      checklist: { title: string; done?: boolean; order?: number }[];
+      checklist: { title: string; isDone?: boolean; }[];
     }
   ): Promise<{
     id: number;
@@ -200,10 +200,8 @@ export class TasksService {
     const checklistEntities = checklist.map((it: any, idx: number) =>
       this.checklistRepository.create({
         ...(it.title && { title: it.title }),
-        ...(typeof it.done !== "undefined" && { done: !!it.done }),
-        ...(typeof it.order !== "undefined"
-          ? { order: it.order }
-          : { order: idx }),
+        ...(typeof it.isDone !== "undefined" && { isDone: !!it.isDone }),
+
         task: { id: task.id },
       } as Partial<TaskChecklist>)
     );

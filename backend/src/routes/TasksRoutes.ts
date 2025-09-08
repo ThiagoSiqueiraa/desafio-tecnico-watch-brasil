@@ -145,16 +145,17 @@ router.get("/getById/:id", verifyToken, (req, res) =>
  *                 dueDate: "2025-09-22T03:00:00.000Z"
  *                 checklist:
  *                   - title: "sample1"
+ *                     isDone: false
  *                   - title: "sample2"
+ *                     isDone: true
  *                   - title: "sample3"
+ *                     isDone: false
  *     responses:
  *       '200':
  *         description: Tarefa atualizada com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TaskList'
  */
-
 router.put("/:id", verifyToken, (req, res) => taskController.update(req, res));
 export default router;

@@ -28,7 +28,7 @@ A API possui uma documentação nos padrões OpenAPI que pode ser consultada em 
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/ThiagoSiqueira/desafio-tecnico-watch-brasil.git
+    git clone https://github.com/ThiagoSiqueiraa/desafio-tecnico-watch-brasil.git
     cd desafio-tecnico-watch-brasil
     ```
 
