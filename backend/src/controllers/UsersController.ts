@@ -1,31 +1,20 @@
 import { Request, Response } from "express";
 import { hash } from "bcrypt";
 import { AppDataSource } from "../data-source";
+import { CreateUserService } from "../services/users/CreateUserService";
 
 export class UsersController {
-
-    constructor(){}
+  constructor(private createUserService: CreateUserService) {
+    this.createUserService = createUserService;
+  }
 
   async create(req: Request, res: Response) {
     try {
       const { name, email, password } = req.body;
-      if (!name) {
-        return res.status(400).json({ message: "Nome  é obrigatório" });
-      }
-
-      if (!email) {
-        return res.status(400).json({ message: "Email é obrigatório" });
-      }
-
-      if (!password) {
-        return res.status(400).json({ message: "Senha é obrigatória" });
-      }
-
-      const passwordHash = await hash(password, 10);
-      const user = await AppDataSource.getRepository("User").save({
+      const user = await this.createUserService.execute({
         name,
         email,
-        password: passwordHash,
+        password,
       });
 
       res.status(201).json(user);
