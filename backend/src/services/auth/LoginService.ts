@@ -36,7 +36,7 @@ export class LoginService {
         name: user.name,
         email: user.email,
       },
-      process.env.JWT_SECRET as string
+      process.env.JWT_SECRET as string || "default_secret"
     );
     const output = {
       id: user.id,
