@@ -1,32 +1,23 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
+import { CreateProjectService } from "../services/projects/CreateProjectService";
 
 export class ProjectsController {
-  constructor() {}
+  constructor(private createProjectService: CreateProjectService) {}
 
   async create(req: Request, res: Response) {
     const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ message: "Nome do projeto é obrigatório" });
-    }
     const userId = (req as any).user.id;
-    const projectRepository = await AppDataSource.getRepository("Project");
-    const project = await projectRepository.create({
-      name,
-      ownerUser: { id: userId },
-    });
-    //o criador do projeto deve ser adicionado como membro automaticamente
 
-    const output = await projectRepository.save(project);
-    const projectMemberRepository = await AppDataSource.getRepository(
-      "ProjectMember"
-    );
-    const memberProjectEntities = projectMemberRepository.create({
-      project: { id: project.id },
-      user: { id: userId },
-    });
-    await projectMemberRepository.save(memberProjectEntities);
-    res.json(output);
+    try {
+      const project = await this.createProjectService.execute({
+        name,
+        userId,
+      });
+      return res.status(201).json(project);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
   }
 
   async getById(req: Request, res: Response) {
