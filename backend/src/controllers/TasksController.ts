@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { TaskChecklist } from "../entities/TaskChecklist";
+import { TasksService } from "../services/TasksService";
 
 const priorityDictonary: {
   [key: string]: number;
@@ -11,96 +12,31 @@ const reversePriorityDictonary: {
 } = { 1: "low", 2: "medium", 3: "high" };
 
 export class TasksController {
-  constructor() {}
+  constructor(private tasksService: TasksService) {
+    console.log("CONSTRUTOR");
+    this.tasksService = tasksService;
+  }
 
   async create(req: Request, res: Response) {
-    const { title, status, priority, dueDate, description, checklist } =
-      req.body;
-    if (!title) {
-      return res.status(400).json({ message: "Título é obrigatório" });
-    }
+    try {
+      const { title, status, priority, dueDate, description, checklist } =
+        req.body;
 
-    if (!status) {
-      return res.status(400).json({ message: "Status é obrigatório" });
-    }
+      const userId = (req as any).userId;
 
-    if (!["pending", "in_progress", "completed"].includes(status)) {
-      return res.status(400).json({
-        message:
-          "Status inválido, informe os status possíveis: 'pending', 'in_progress', 'completed'",
+      const output = await this.tasksService.create({
+        title,
+        status,
+        priority,
+        dueDate,
+        description,
+        checklist,
+        userId,
       });
+      res.json(output);
+    } catch (err) {
+      res.status(400).json({ message: (err as Error).message });
     }
-
-    if (!priority) {
-      return res.status(400).json({ message: "Prioridade é obrigatória" });
-    }
-
-    if (!dueDate) {
-      return res
-        .status(400)
-        .json({ message: "Data de vencimento é obrigatória" });
-    }
-
-    //checa o formato da data
-    if (isNaN(Date.parse(dueDate))) {
-      return res
-        .status(400)
-        .json({ message: "Data de vencimento em formato inválido" });
-    }
-
-    if (!checklist || checklist.length === 0) {
-      return res.status(400).json({
-        message: "Checklist é obrigatória e deve ter ao menos um item",
-      });
-    }
-
-    const actualProjectUser = await AppDataSource.getRepository("User").find({
-      where: { id: (req as any).user.id },
-      relations: ["currentProject"],
-    });
-
-    if (actualProjectUser.length === 0) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
-    }
-
-    if (!actualProjectUser[0].currentProject) {
-      return res
-        .status(400)
-        .json({ message: "Usuário não está em um projeto" });
-    }
-
-    const projectId = actualProjectUser[0].currentProject.id;
-
-    const tasksRepository = await AppDataSource.getRepository("Task");
-    // Cria as entidades de checklist associadas à tarefa
-
-    const newTask = await tasksRepository.create({
-      title,
-      status,
-      priority: priorityDictonary[priority],
-      dueDate: dueDate,
-      project: { id: projectId },
-      description,
-    });
-
-    const savedTask = await tasksRepository.save(newTask);
-
-    const checklistEntities = checklist.map((it: any, idx: number) =>
-      AppDataSource.getRepository("TaskChecklist").create({
-        title: it.title,
-        done: !!it.done,
-        order: it.order ?? idx,
-        task: { id: savedTask.id }, // associa por FK
-      })
-    );
-
-    await AppDataSource.getRepository("TaskChecklist").save(checklistEntities);
-
-    res.json({
-      ...newTask,
-      completedSubtasks: 0,
-      totalSubtasks: checklist.length,
-    });
   }
 
   async listByProject(req: Request, res: Response) {

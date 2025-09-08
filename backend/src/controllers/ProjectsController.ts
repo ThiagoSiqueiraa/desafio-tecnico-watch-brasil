@@ -101,7 +101,6 @@ export class ProjectsController {
       relations: ["members", "ownerUser", "members.user"],
     });
 
-    console.log(project);
     if (!project) {
       return res.status(404).json({ message: "Projeto não encontrado" });
     }
