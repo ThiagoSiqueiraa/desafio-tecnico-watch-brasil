@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { CreateProjectService } from "../services/projects/CreateProjectService";
+import { GetProjectService } from "../services/projects/GetProjectService";
 
 export class ProjectsController {
-  constructor(private createProjectService: CreateProjectService) {}
+  constructor(
+    private createProjectService: CreateProjectService,
+    private getProjectService: GetProjectService
+  ) {}
 
   async create(req: Request, res: Response) {
     const { name } = req.body;
@@ -21,19 +25,13 @@ export class ProjectsController {
   }
 
   async getById(req: Request, res: Response) {
-    const { id } = req.params;
-
-    const projectRepository = await AppDataSource.getRepository("Project");
-    const project = await projectRepository.findOne({
-      where: { id: Number(id) },
-      select: ["id", "name"],
-    });
-
-    if (!project) {
-      return res.status(404).json({ message: "Projeto não encontrado" });
+    try {
+      const { id } = req.params;
+      const project = await this.getProjectService.execute({ id: Number(id) });
+      return res.json(project);
+    } catch (e) {
+      return res.status(400).json({ message: (e as Error).message });
     }
-
-    res.json(project);
   }
 
   async list(req: Request, res: Response) {

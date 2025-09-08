@@ -3,13 +3,15 @@ import { verifyToken } from "../middleware/checkAuth";
 import { ProjectsController } from "../controllers/ProjectsController";
 import { CreateProjectService } from "../services/projects/CreateProjectService";
 import { AppDataSource } from "../data-source";
+import { GetProjectService } from "../services/projects/GetProjectService";
 
 const router = Router();
 const projectController = new ProjectsController(
   new CreateProjectService(
     AppDataSource.getRepository("Project"),
     AppDataSource.getRepository("ProjectMember")
-  )
+  ),
+  new GetProjectService(AppDataSource.getRepository("Project"))
 );
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
 router.get("/:id", verifyToken, (req, res) =>
