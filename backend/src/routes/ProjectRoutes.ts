@@ -8,6 +8,7 @@ import { ListProjectsService } from "../services/projects/ListProjectsService";
 import { AddMemberInProjectService } from "../services/projects/AddMemberInProjectService";
 import { ListMembersInProjectService } from "../services/projects/ListMembersInProjectService";
 import { ChangeActualProjectService } from "../services/users/ChangeActualProjectService";
+import { RemoveMemberOfProjectService } from "../services/projects/RemoveMemberOfProjectService";
 
 const router = Router();
 const projectController = new ProjectsController(
@@ -24,6 +25,11 @@ const projectController = new ProjectsController(
   ),
   new ListMembersInProjectService(AppDataSource.getRepository("Project")),
   new ChangeActualProjectService(
+    AppDataSource.getRepository("Project"),
+    AppDataSource.getRepository("User"),
+    AppDataSource.getRepository("ProjectMember")
+  ),
+  new RemoveMemberOfProjectService(
     AppDataSource.getRepository("Project"),
     AppDataSource.getRepository("User"),
     AppDataSource.getRepository("ProjectMember")

@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { TaskChecklist } from "../entities/TaskChecklist";
 import { TasksService } from "../services/TasksService";
 import { ListTasksByProjectService } from "../services/ListTasksByProjectService";
 import { GetTaskService } from "../services/GetTaskService";
