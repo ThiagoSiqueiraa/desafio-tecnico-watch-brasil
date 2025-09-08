@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { CreateProjectService } from "../services/projects/CreateProjectService";
 import { GetProjectService } from "../services/projects/GetProjectService";
+import { ListProjectsService } from "../services/projects/ListProjectsService";
 
 export class ProjectsController {
   constructor(
     private createProjectService: CreateProjectService,
-    private getProjectService: GetProjectService
+    private getProjectService: GetProjectService,
+    private listProjectsService: ListProjectsService
   ) {}
 
   async create(req: Request, res: Response) {
@@ -35,21 +37,15 @@ export class ProjectsController {
   }
 
   async list(req: Request, res: Response) {
-    const { userId } = req.query;
-    const projectMemberRepository = await AppDataSource.getRepository(
-      "ProjectMember"
-    );
-
-    const memberProjectsRelations = await projectMemberRepository.find({
-      where: { user: { id: Number(userId) } },
-      relations: ["project"],
-    });
-
-    const projects = memberProjectsRelations.map(
-      (relation) => relation.project
-    );
-
-    res.json(projects);
+    try {
+      const userId = (req as any).user.id;
+      const projects = await this.listProjectsService.execute({ userId });
+      return res.json(projects);
+    } catch (e) {
+      return res
+        .status(500)
+        .json({ message: "Erro ao obter usuário autenticado" });
+    }
   }
 
   async delete(req: Request, res: Response) {
