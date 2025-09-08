@@ -4,13 +4,15 @@ import { CreateProjectService } from "../services/projects/CreateProjectService"
 import { GetProjectService } from "../services/projects/GetProjectService";
 import { ListProjectsService } from "../services/projects/ListProjectsService";
 import { AddMemberInProjectService } from "../services/projects/AddMemberInProjectService";
+import { ListMembersInProjectService } from "../services/projects/ListMembersInProjectService";
 
 export class ProjectsController {
   constructor(
     private createProjectService: CreateProjectService,
     private getProjectService: GetProjectService,
     private listProjectsService: ListProjectsService,
-    private addMemberInProjectService: AddMemberInProjectService
+    private addMemberInProjectService: AddMemberInProjectService,
+    private listMembersInProjectService: ListMembersInProjectService
   ) {}
 
   async create(req: Request, res: Response) {
