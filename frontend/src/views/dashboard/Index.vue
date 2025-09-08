@@ -7,10 +7,11 @@ import { inject, onMounted } from 'vue'
 import { ref } from 'vue'
 
 const reportsGateway = inject('reportsGateway') as ReportsGateway
-
+const loading = ref(false)
 const reportsState = ref<ReportsDTO>()
 onMounted(async () => {
   try {
+    loading.value = true
     const reports = await reportsGateway.get(
       useAuthStore().user!.currentProject!.id,
       useAuthStore().token,
@@ -18,19 +19,22 @@ onMounted(async () => {
     reportsState.value = reports
   } catch (e) {
     console.log(e)
+  } finally {
+    loading.value = false
   }
 })
 </script>
 
 <template>
   <v-container fluid class="pa-4">
-    <v-row>
+    <v-row lo>
       <v-col cols="12" md="4">
         <ReportPill
           title="Tarefas pendentes"
           :value="reportsState?.status.pending || 0"
           color="grey"
           rounded="false"
+          :loading="loading"
         />
       </v-col>
 
@@ -40,6 +44,7 @@ onMounted(async () => {
           :value="reportsState?.status.in_progress || 0"
           color="primary"
           rounded="false"
+          :loading="loading"
         />
       </v-col>
 
@@ -49,16 +54,17 @@ onMounted(async () => {
           :value="reportsState?.status.completed || 0"
           color="green"
           rounded="false"
+          :loading="loading"
         />
       </v-col>
 
-      <!-- 4º item vai automaticamente para a 2ª linha -->
       <v-col cols="12" md="4">
         <ReportPill
           title="Tarefas atrasadas"
           :value="reportsState?.due.overdue || 0"
           color="teal"
           rounded="false"
+          :loading="loading"
         />
       </v-col>
       <v-col cols="12" md="4">
@@ -67,6 +73,7 @@ onMounted(async () => {
           :value="reportsState?.due.onTime || 0"
           color="teal"
           rounded="false"
+          :loading="loading"
         />
       </v-col>
     </v-row>
