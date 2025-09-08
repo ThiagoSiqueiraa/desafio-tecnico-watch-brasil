@@ -91,12 +91,18 @@ router.get("/:id", verifyToken, (req, res) =>
  *               items: { $ref: "#/components/schemas/ProjectList" }
  */
 router.get("/", verifyToken, (req, res) => projectController.list(req, res));
+
+
 router.delete("/:id", verifyToken, (req, res) =>
   projectController.delete(req, res)
 );
+
+
 router.post("/addMember/:projectId", verifyToken, (req, res) =>
   projectController.addMember(req, res)
 );
+
+
 router.get("/members/:projectId"  , verifyToken, (req, res) =>
   projectController.listMembers(req, res)
 );
