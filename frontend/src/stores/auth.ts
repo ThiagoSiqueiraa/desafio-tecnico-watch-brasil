@@ -52,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) return
     try {
       const authGateway = new AuthGateway()
-      const data = await authGateway.me(token.value) 
+      const data = await authGateway.profile(token.value) 
       user.value = {
         id: data.id,
         name: data.name,

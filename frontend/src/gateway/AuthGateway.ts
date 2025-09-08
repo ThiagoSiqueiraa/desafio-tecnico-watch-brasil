@@ -34,8 +34,8 @@ export default class AuthGateway {
     return response.data
   }
 
-  async me(token: string): Promise<MeResponse> {
-    const response = await axios.get<MeResponse>(`${this.baseUrl}/me`, {
+  async profile(token: string): Promise<MeResponse> {
+    const response = await axios.get<MeResponse>(`${this.baseUrl}/users/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
