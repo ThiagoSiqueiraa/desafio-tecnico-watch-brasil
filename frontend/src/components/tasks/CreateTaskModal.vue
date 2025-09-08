@@ -193,20 +193,6 @@ onMounted(async () => {
                 </v-radio-group>
               </v-col>
               <v-col cols="12">
-                <div class="mb-2 font-weight-bold">Membros:</div>
-                <v-list v-if="members.length > 0" class="d-flex flex-row">
-                  <v-list-item
-                    v-for="(member, index) in members"
-                    :key="index"
-                    class="mb-3 bg-grey-lighten-4"
-                    :title="member.name"
-                    rounded
-                    inline
-                  />
-                </v-list>
-                <div v-else class="text-grey">Nenhum membro adicionado.</div>
-              </v-col>
-              <v-col cols="12">
                 <v-list>
                   <v-list-item
                     v-for="(task, index) in tasks"
