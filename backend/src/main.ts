@@ -53,19 +53,5 @@ app.post("/login", async (req: Request, res: Response) => {
   });
 });
 
-app.get("/me", verifyToken, async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const userRepository = AppDataSource.getRepository(User);
-  const user = await userRepository.findOne({
-    where: { id: userId },
-    relations: ["currentProject"],
-  });
-  if (!user) {
-    return res.status(404).json({ message: "Usuário não encontrado" });
-  }
-
-  res.json(user);
-});
-
 console.log("Server running on http://localhost:3000");
 app.listen(3000);
