@@ -44,9 +44,9 @@ cd docker
 docker-compose up
 ```
 
-A API estará disponível em `http://localhost:3000` (ou porta configurada).
+A API estará disponível em `http://localhost:3000` (ou porta configurada, caso a porta tenha sido alterada, é necessário alterar também no docker-compose o espelhamento da porta).
 
-O frontend estará disponível em `http://localhost:5173` (ou porta configurada)
+O frontend estará disponível em `http://localhost:5173` (ou porta configurada, caso a porta tenha sido alterada, é necessário alterar também no docker-compose o espelhamento da porta).
 
 ## Testes
 
