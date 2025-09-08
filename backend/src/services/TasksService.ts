@@ -33,7 +33,7 @@ export class TasksService {
     checklist: { title: string; done?: boolean; order?: number }[];
     userId: number;
   }): Promise<{
-    id: string;
+    id: number;
     title: string;
     status: string;
     priority: number;
@@ -78,7 +78,7 @@ export class TasksService {
     }
 
     const actualProjectUser = await this.userRepository.find({
-      where: { id: String(userId) },
+      where: { id: userId },
       relations: ["currentProject"],
     });
 
@@ -123,7 +123,7 @@ export class TasksService {
       title: savedTask.title,
       status: savedTask.status,
       priority: savedTask.priority,
-      dueDate: savedTask.dueDate as Date, // ensure dueDate is Date
+      dueDate: savedTask.dueDate as Date, 
       description: savedTask.description,
       createdAt: savedTask.createdAt,
       updatedAt: savedTask.updatedAt,

@@ -13,7 +13,7 @@ import { ProjectMember } from "./ProjectMember";
 @Entity({ schema: "app", name: "projects" })
 export class Project {
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
-  id!: string;
+  id!: number;
 
   @Column("text")
   name!: string;

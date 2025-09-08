@@ -13,7 +13,7 @@ import {
 @Entity({ name: "tasks_checklists", schema: "app" })
 export class TaskChecklist {
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
-  id!: string;
+  id!: number;
 
   @Column({ type: "bigint", name: "task_id" })
   taskId!: string;

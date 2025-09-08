@@ -8,7 +8,7 @@ export class ProjectMember {
   // Torna as FKs parte da PK composta com { primary: true }
 
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
-  id!: string;
+  id!: number;
 
   @RelationId((pm: ProjectMember) => pm.project)
   projectId!: string;

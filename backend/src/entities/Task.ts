@@ -15,7 +15,7 @@ import { TaskChecklist } from "./TaskChecklist";
 @Entity({ schema: "app", name: "tasks" })
 export class Task {
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
-  id!: string;
+  id!: number;
 
   @ManyToOne(() => Project, { nullable: false })
   @JoinColumn({ name: "project_id" })

@@ -12,8 +12,12 @@ const taskController = new TasksController(
     AppDataSource.getRepository("TaskChecklist")
   )
 );
-router.post("/", verifyToken, taskController.create);
-router.get("/:projectId", verifyToken, taskController.listByProject);
-router.get("/getById/:id", verifyToken, taskController.getById);
-router.put("/:id", verifyToken, taskController.update);
+router.post("/", verifyToken, (req, res) => taskController.create(req, res));
+router.get("/:projectId", verifyToken, (req, res) =>
+  taskController.listByProject(req, res)
+);
+router.get("/getById/:id", verifyToken, (req, res) =>
+  taskController.getById(req, res)
+);
+router.put("/:id", verifyToken, (req, res) => taskController.update(req, res));
 export default router;
