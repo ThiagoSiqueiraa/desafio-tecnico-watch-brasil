@@ -65,9 +65,31 @@ const projectController = new ProjectsController(
  *               $ref: '#/components/schemas/ProjectList'
  */
 router.post("/", verifyToken, (req, res) => projectController.create(req, res));
+
+
 router.get("/:id", verifyToken, (req, res) =>
   projectController.getById(req, res)
 );
+
+/**
+ * @openapi
+ * /projects:
+ *   get:
+ *     tags:
+ *       - projects
+ *     summary: Listar projetos do usuário
+ *     operationId: listProjects
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Listado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: { $ref: "#/components/schemas/ProjectList" }
+ */
 router.get("/", verifyToken, (req, res) => projectController.list(req, res));
 router.delete("/:id", verifyToken, (req, res) =>
   projectController.delete(req, res)
@@ -75,7 +97,7 @@ router.delete("/:id", verifyToken, (req, res) =>
 router.post("/addMember/:projectId", verifyToken, (req, res) =>
   projectController.addMember(req, res)
 );
-router.get("/members/:projectId", verifyToken, (req, res) =>
+router.get("/members/:projectId"  , verifyToken, (req, res) =>
   projectController.listMembers(req, res)
 );
 router.put("/changeActualProject/:projectId", verifyToken, (req, res) =>
