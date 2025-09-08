@@ -78,4 +78,9 @@ npm test
 ![Tela de gerenciamento de membros](./images/tela_gerenciamento_membros.png "Tela de gerenciamento de membros")
 ## Observações
 
+
+### Modal para criar novo projeto
+#### Este passo é importante para conseguir criar tarefas, para isso você precisa estar em um projeto, após a criação, volte a listagem e escolha o projeto criado.
+![Popup criação de projeto](./images/modal_criar_projeto.png "Tela de criação de projeto")
+## Observações
 Consulte o arquivo `package.json` para mais detalhes sobre as dependências e scripts disponíveis.
