@@ -1,4 +1,3 @@
-import "./tracing";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -14,5 +13,5 @@ app.use(cors());
 app.use("/", routes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-console.log(`Server running on http://backend:${port}`);
+console.log(`Server running on http://localhost:${port}`);
 app.listen(port);
