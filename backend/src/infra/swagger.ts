@@ -79,11 +79,56 @@ export const swaggerSpec = swaggerJSDoc({
             },
           ],
         },
-      },
-      Checklist: {
-        type: "object",
-        properties: {
-          title: { type: "string" },
+        TaskView: {
+          allOf: [
+            { $ref: "#/components/schemas/TaskBase" },
+            {
+              type: "object",
+              properties: {
+                id: { type: "integer", readOnly: true },
+                createdAt: {
+                  type: "string",
+                  format: "date-time",
+                  readOnly: true,
+                },
+                updatedAt: {
+                  type: "string",
+                  format: "date-time",
+                  readOnly: true,
+                },
+                checklist: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      title: { type: "string" },
+                      taskId: { type: "integer", readOnly: true },
+                      isDone: { type: "boolean", readOnly: true },
+                      createdAt: {
+                        type: "string",
+                        format: "date-time",
+                        readOnly: true,
+                      },
+                      updatedAt: {
+                        type: "string",
+                        format: "date-time",
+                        readOnly: true,
+                      },
+                    },
+                    required: [
+                      "id",
+                      "title",
+                      "isDone",
+                      "taskId",
+                      "createdAt",
+                      "updatedAt",
+                    ],
+                  },
+                },
+              },
+              required: ["id", "createdAt", "updatedAt"],
+            },
+          ],
         },
       },
     },
