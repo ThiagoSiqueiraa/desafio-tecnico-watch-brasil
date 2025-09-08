@@ -58,6 +58,33 @@ export const swaggerSpec = swaggerJSDoc({
             },
           ],
         },
+        TaskInput: {
+          allOf: [
+            { $ref: "#/components/schemas/TaskBase" },
+            {
+              type: "object",
+              properties: {
+                checklist: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      title: { type: "string" },
+                    },
+                    required: ["title"],
+                  },
+                },
+              },
+              required: ["checklist"],
+            },
+          ],
+        },
+      },
+      Checklist: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+        },
       },
     },
   },

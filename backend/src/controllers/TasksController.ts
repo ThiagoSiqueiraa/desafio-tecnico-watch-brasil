@@ -28,7 +28,7 @@ export class TasksController {
         checklist,
         userId,
       });
-      res.json(output);
+      res.status(201).json(output);
     } catch (err) {
       res.status(400).json({ message: (err as Error).message });
     }

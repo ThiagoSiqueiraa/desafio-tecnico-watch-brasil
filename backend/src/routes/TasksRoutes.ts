@@ -16,6 +16,42 @@ const taskController = new TasksController(
   new GetTaskService(AppDataSource.getRepository("Task"))
 );
 
+/**
+ * @openapi
+ * /tasks:
+ *   post:
+ *     tags:
+ *       - tasks
+ *     summary: Criar uma tarefa
+ *     operationId: createTask
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TaskInput'
+ *           examples:
+ *             exemplo:
+ *               value:
+ *                 title: "11"
+ *                 description: "11"
+ *                 priority: "low"
+ *                 status: "completed"
+ *                 dueDate: "2025-09-22T03:00:00.000Z"
+ *                 checklist:
+ *                   - { "title": "sample1" }
+ *                   - { "title": "sample2" }
+ *                   - { "title": "sample3" }
+ *     responses:
+ *       '201':
+ *         description: Criado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TaskList'
+ */
 
 router.post("/", verifyToken, (req, res) => taskController.create(req, res));
 router.get("/:projectId", verifyToken, (req, res) =>
@@ -28,6 +64,8 @@ router.get("/getById/:id", verifyToken, (req, res) =>
  * @openapi
  * /tasks/{projectId}:
  *   get:
+ *     tags:
+ *       - tasks
  *     summary: Lista tarefas do projeto
  *     security:
  *       - bearerAuth: []
