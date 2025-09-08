@@ -1,0 +1,8 @@
+
+.my-custom-button-text{
+    color: white !important;
+}
+
+.swal2-container {
+  z-index: 3000 !important;
+}
