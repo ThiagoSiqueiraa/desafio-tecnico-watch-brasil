@@ -16,8 +16,7 @@ A arquitetura do backend segue a estrutura Controller -> Service -> Repository
 #### Banco de dados: PostgresSQL ( a criação da estrutura do banco será realizada no momento que o docker-compose for executado)
 
 ## Documentação
-A API possui uma documentação nos padrões OpenAPI que pode ser consultada em `http://localhost:3000/docs`
-
+A API possui uma documentação nos padrões OpenAPI que pode ser consultada em `http://localhost:3000/docs` (ou a porta que você tenha escolhido)
 ## Dependências
 
 - Node.js (>= 22.19)
@@ -40,7 +39,7 @@ Para rodar o projeto em ambiente de desenvolvimento:
 Crie um .env para o backend com base no .env para funcionamento do sistema.
 
 ```bash
-cd docker
+cd docker 
 docker-compose up
 ```
 
@@ -56,6 +55,27 @@ Para rodar os testes:
 npm test
 ```
 
+
+## Telas
+
+### Login
+![Tela de login](./images/tela_login.png "Tela de login")
+
+### Registro
+![Tela de cadastro](./images/tela_cadastro.png "Tela de login")
+
+
+### Dashboard
+#### Tela onde fica os relatórios básicos da aplicação
+![Tela de dashboard](./images/tela_dashboard.png "Tela de login")
+
+### Gerenciar tarefas
+#### Tela onde é possível cadastrar tarefas, acompanhar progresso, editar progresso. (CRUD)
+![Tela de gerenciamento de tarefas](./images/tela_tarefas.png "Tela de gerenciamento de tarefas")
+
+### Gerenciar de membros do projeto
+#### Tela onde é possível cadastrar membros que irão coloborar com o projeto, sendo possível criar tarefas, editar tarefas
+![Tela de gerenciamento de membros](./images/tela_gerenciamento_membros.png "Tela de gerenciamento de membros")
 ## Observações
 
 Consulte o arquivo `package.json` para mais detalhes sobre as dependências e scripts disponíveis.
