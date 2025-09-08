@@ -70,7 +70,6 @@ const submit = async () => {
     showDialog.value = false
     emit('onSuccess')
   } catch (e: any) {
-    showDialog.value = false
     console.log(e)
     const messageError = e.response.data.message || 'Erro ao salvar a tarefa'
     Swal.fire({
