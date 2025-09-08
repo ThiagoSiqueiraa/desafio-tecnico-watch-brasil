@@ -4,13 +4,15 @@ import { verifyToken } from "../middleware/checkAuth";
 
 import { TasksService } from "../services/TasksService";
 import { AppDataSource } from "../data-source";
+import { ListTasksByProjectService } from "../services/ListTasksByProjectService";
 const router = Router();
 const taskController = new TasksController(
   new TasksService(
     AppDataSource.getRepository("Task"),
     AppDataSource.getRepository("User"),
     AppDataSource.getRepository("TaskChecklist")
-  )
+  ),
+  new ListTasksByProjectService(AppDataSource.getRepository("Task"))
 );
 router.post("/", verifyToken, (req, res) => taskController.create(req, res));
 router.get("/:projectId", verifyToken, (req, res) =>

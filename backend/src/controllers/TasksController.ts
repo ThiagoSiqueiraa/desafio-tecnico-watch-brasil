@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { TaskChecklist } from "../entities/TaskChecklist";
 import { TasksService } from "../services/TasksService";
+import { ListTasksByProjectService } from "../services/ListTasksByProjectService";
 
 const priorityDictonary: {
   [key: string]: number;
@@ -12,9 +13,12 @@ const reversePriorityDictonary: {
 } = { 1: "low", 2: "medium", 3: "high" };
 
 export class TasksController {
-  constructor(private tasksService: TasksService) {
-    console.log("CONSTRUTOR");
+  constructor(
+    private tasksService: TasksService,
+    private listTasksByProjectService: ListTasksByProjectService
+  ) {
     this.tasksService = tasksService;
+    this.listTasksByProjectService = listTasksByProjectService;
   }
 
   async create(req: Request, res: Response) {
@@ -42,33 +46,14 @@ export class TasksController {
   async listByProject(req: Request, res: Response) {
     const { projectId } = req.params;
 
-    if (!projectId) {
-      return res.status(400).json({ message: "ID do projeto é obrigatório" });
+    try {
+      const output = await this.listTasksByProjectService.execute({
+        projectId: Number(projectId),
+      });
+      return res.json(output);
+    } catch (e) {
+      return res.status(400).json({ message: (e as Error).message });
     }
-
-    const tasksRepository = await AppDataSource.getRepository("Task");
-    const tasks = await tasksRepository.find({
-      where: { project: { id: Number(projectId) } },
-      relations: ["checklist"],
-      order: { updatedAt: "DESC" },
-    });
-
-    const output = tasks.map((t) => {
-      return {
-        id: t.id,
-        title: t.title,
-        status: t.status,
-        priority: reversePriorityDictonary[t.priority],
-        dueDate: t.dueDate,
-        description: t.description,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-        completedSubtasks:
-          t.checklist?.filter((c: TaskChecklist) => c.isDone).length || 0,
-        totalSubtasks: t.checklist?.length || 0,
-      };
-    });
-    res.json(output);
   }
 
   async getById(req: Request, res: Response) {
