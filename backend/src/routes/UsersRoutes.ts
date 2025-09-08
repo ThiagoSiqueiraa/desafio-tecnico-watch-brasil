@@ -65,7 +65,44 @@ const usersController = new UsersController(
  */
 router.post("/", (req, res) => usersController.create(req, res));
 
-
+/**
+ * @openapi
+ * /users/profile:
+ *   get:
+ *     tags:
+ *       - users
+ *     summary: Recupera o perfil do usuário autenticado
+ *     operationId: getProfileUser
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Perfil do usuário recuperado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: "Fulano de Tal"
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                   example: "usuario@exemplo.com"
+ *                 currentProject:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ */
 router.get("/profile", verifyToken, (req, res) => usersController.profile(req, res));
+
 
 export default router;
