@@ -52,7 +52,9 @@ O frontend estará disponível em `http://localhost:5173` (ou porta configurada,
 Para rodar os testes:
 
 ```bash
-npm test
+cd backend
+npm i
+npm run test:jest
 ```
 
 
